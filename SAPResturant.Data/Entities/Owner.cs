@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAPResturant.Data.Entities.Resturants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,10 +14,19 @@ namespace SAPResturant.Data.Entities
         public int OwnerId { get; set; }
 
         [MaxLength(100)]
+        [DataType("nvarchar(100)")]
         public string OwnerName { get; set; }
+
+        [MaxLength(20)]
+        [DataType("nvarchar(20)")]
+        public string? OwnerPhoneNumber { get; set; }
+        [MaxLength(100)]
+        [DataType("nvarchar(100)")]
+        public string? OwnerEmail { get; set; }
 
         [Required]
         [MaxLength(100)]
+        [DataType("nvarchar(100)")]
         public string OwnerUserName { get; set; }
 
         [Required]

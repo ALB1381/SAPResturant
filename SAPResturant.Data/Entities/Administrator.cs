@@ -14,6 +14,7 @@ namespace SAPResturant.Data.Entities
 
         [Required]
         [MaxLength(100)]
+        [DataType("nvarchar(100)")]
         public string AdminstratorUserName { get; set; }
 
         [Required]
