@@ -21,6 +21,11 @@ namespace SAPResturant.Data.Entities.Owners
 
         public bool IsPayed { get; set; }
 
+        [MaxLength(100)]
+        [DataType("nvarchar(100)")]
+        public string? Description { get; set; } 
+
+
         [ForeignKey("OwnerTransactionId")]
         public OwnerTransaction OwnerTransaction { get; set; }
     }

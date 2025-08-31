@@ -21,6 +21,7 @@ namespace SAPResturant.Data.Entities.Owners
         [MaxLength(20)]
         [DataType("nvarchar(20)")]
         public string? OwnerPhoneNumber { get; set; }
+
         [MaxLength(100)]
         [DataType("nvarchar(100)")]
         public string? OwnerEmail { get; set; }
@@ -31,14 +32,16 @@ namespace SAPResturant.Data.Entities.Owners
         public string OwnerUserName { get; set; }
 
         [Required]
-        public byte[] AdminstratorPasswordHash { get; set; }
+        public byte[] OwnerPasswordHash { get; set; }
 
         [Required]
-        public byte[] AdminstratorPasswordSalt { get; set; }
+        public byte[] OwnerPasswordSalt { get; set; }
 
         // An Owner can have multiple Restaurants and a restaurant can have multiple Sections
         public List<Resturant> Resturants { get; set; }
         public bool IsOwnerActive { get; set; }
         public List<Transaction> Transactions { get; set; }
+
+        public List<OwnerNotification> OwnerNotifications { get; set; }
     }
 }
