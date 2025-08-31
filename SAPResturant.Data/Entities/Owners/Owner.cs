@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
-namespace SAPResturant.Data.Entities
+namespace SAPResturant.Data.Entities.Owners
 {
     public class Owner
     {
@@ -37,6 +38,7 @@ namespace SAPResturant.Data.Entities
 
         // An Owner can have multiple Restaurants and a restaurant can have multiple Sections
         public List<Resturant> Resturants { get; set; }
-        public bool Ispayed { get; set; }
+        public bool IsOwnerActive { get; set; }
+        public List<Transaction> Transactions { get; set; }
     }
 }

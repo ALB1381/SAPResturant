@@ -8,6 +8,8 @@ namespace SAPResturant.Data.Entities.Resturants
         [Key]
         public int CityId { get; set; }
 
+        [MaxLength(100)]
+        [DataType("nvarchar(100)")]
         public string CityName { get; set; }
 
         public int CountryId { get; set; }

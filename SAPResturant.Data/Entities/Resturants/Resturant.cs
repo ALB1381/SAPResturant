@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SAPResturant.Data.Entities.Owners;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SAPResturant.Data.Entities.Resturants
@@ -16,14 +17,16 @@ namespace SAPResturant.Data.Entities.Resturants
 
         [MaxLength(400)]
         [DataType("nvarchar(400)")]
-        public string ResturantAddress { get; set; }
-
+        public string MainResturantAddress { get; set; }
+        
         public int OwnerId { get; set; }
         public int CityId { get; set; }
 
         #region Rel
+
         [ForeignKey("OwnerId")]
         public Owner Owner { get; set; }
+
         public List<Branch> Branches { get; set; }
 
         [ForeignKey("CityId")]
