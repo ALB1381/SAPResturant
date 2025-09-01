@@ -10,19 +10,19 @@ namespace SAPResturant.Data.Entities
     public class Log
     {
         [Key]
-        public int LogId { get; set; }
+        public long LogId { get; set; }
 
-        [DataType("nvarchar(50)")]
+        [MaxLength(50)]
         public string WhateRole { get; set; }
         public int UserId { get; set; }
 
-        [DataType("nvarchar(50)")]
+        [MaxLength(50)]
         public string Command { get; set; }
 
-        [DataType("nvarchar(50)")]
+        [MaxLength(50)]
         public string WhichTable { get; set; }
 
-        [DataType("nvarchar(100)")]
+        [MaxLength(100)]
         public string Message { get; set; }
     }
 }

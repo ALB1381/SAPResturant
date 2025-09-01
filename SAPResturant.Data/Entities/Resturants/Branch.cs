@@ -10,7 +10,6 @@ namespace SAPResturant.Data.Entities.Resturants
         public int SectionId { get; set; }
 
         [MaxLength(400)]
-        [DataType("nvarchar(400)")]
         public string? SectionAddress { get; set; }
 
 

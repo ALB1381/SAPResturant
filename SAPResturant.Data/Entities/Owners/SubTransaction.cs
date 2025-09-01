@@ -21,7 +21,6 @@ namespace SAPResturant.Data.Entities.Owners
         public int OwnerTransactionId { get; set; }
 
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string? Description { get; set; } 
 
 

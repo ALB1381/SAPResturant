@@ -1,8 +1,10 @@
-﻿using SAPResturant.Data.Entities.Resturants;
+﻿using SAPResturant.Data.Entities.Owners.Tickets;
+using SAPResturant.Data.Entities.Resturants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -15,20 +17,16 @@ namespace SAPResturant.Data.Entities.Owners
         public int OwnerId { get; set; }
 
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string OwnerName { get; set; }
 
         [MaxLength(20)]
-        [DataType("nvarchar(20)")]
         public string? OwnerPhoneNumber { get; set; }
 
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string? OwnerEmail { get; set; }
 
         [Required]
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string OwnerUserName { get; set; }
 
         public DateTime OwnerRegisterDate { get; set; }
@@ -45,5 +43,6 @@ namespace SAPResturant.Data.Entities.Owners
         public List<OwnerTransaction>? Transactions { get; set; }
 
         public List<OwnerNotification>? OwnerNotifications { get; set; }
+        public List<Ticket> Tickets { get; set; }
     }
 }

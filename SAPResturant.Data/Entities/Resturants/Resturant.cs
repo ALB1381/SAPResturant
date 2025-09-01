@@ -12,11 +12,9 @@ namespace SAPResturant.Data.Entities.Resturants
         public int ResturantId { get; set; }
 
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string ResturantName { get; set; }
 
         [MaxLength(400)]
-        [DataType("nvarchar(400)")]
         public string MainResturantAddress { get; set; }
         
         public int OwnerId { get; set; }

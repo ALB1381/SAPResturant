@@ -55,9 +55,10 @@ namespace SAPResturant.Data.Migrations
                 name: "DeleteHistories",
                 columns: table => new
                 {
-                    HistoryId = table.Column<int>(type: "int", nullable: false),
+                    HistoryId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     DeletedRow = table.Column<int>(type: "int", nullable: false),
-                    TableName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TableName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,12 +69,13 @@ namespace SAPResturant.Data.Migrations
                 name: "Logs",
                 columns: table => new
                 {
-                    LogId = table.Column<int>(type: "int", nullable: false),
-                    WhateRole = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LogId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WhateRole = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Command = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WhichTable = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Command = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    WhichTable = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,6 +99,30 @@ namespace SAPResturant.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Owners", x => x.OwnerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketCategories",
+                columns: table => new
+                {
+                    TicketCategoryId = table.Column<int>(type: "int", nullable: false),
+                    TicketCategoryText = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketCategories", x => x.TicketCategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketModels",
+                columns: table => new
+                {
+                    TicketModelId = table.Column<int>(type: "int", nullable: false),
+                    TicketModelText = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketModels", x => x.TicketModelId);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,6 +204,39 @@ namespace SAPResturant.Data.Migrations
                         column: x => x.OwnerId,
                         principalTable: "Owners",
                         principalColumn: "OwnerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tickets",
+                columns: table => new
+                {
+                    TicketID = table.Column<int>(type: "int", nullable: false),
+                    TicketHeader = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TicketText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    TicketModelId = table.Column<int>(type: "int", nullable: false),
+                    TicketCategoryId = table.Column<int>(type: "int", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tickets", x => x.TicketID);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Owners_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owners",
+                        principalColumn: "OwnerId");
+                    table.ForeignKey(
+                        name: "FK_Tickets_TicketCategories_TicketCategoryId",
+                        column: x => x.TicketCategoryId,
+                        principalTable: "TicketCategories",
+                        principalColumn: "TicketCategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tickets_TicketModels_TicketModelId",
+                        column: x => x.TicketModelId,
+                        principalTable: "TicketModels",
+                        principalColumn: "TicketModelId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -286,6 +345,21 @@ namespace SAPResturant.Data.Migrations
                 name: "IX_SubTransactions_OwnerTransactionId",
                 table: "SubTransactions",
                 column: "OwnerTransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_OwnerId",
+                table: "Tickets",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketCategoryId",
+                table: "Tickets",
+                column: "TicketCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketModelId",
+                table: "Tickets",
+                column: "TicketModelId");
         }
 
         /// <inheritdoc />
@@ -310,6 +384,9 @@ namespace SAPResturant.Data.Migrations
                 name: "SubTransactions");
 
             migrationBuilder.DropTable(
+                name: "Tickets");
+
+            migrationBuilder.DropTable(
                 name: "BranchTypes");
 
             migrationBuilder.DropTable(
@@ -320,6 +397,12 @@ namespace SAPResturant.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OwnerTransactions");
+
+            migrationBuilder.DropTable(
+                name: "TicketCategories");
+
+            migrationBuilder.DropTable(
+                name: "TicketModels");
 
             migrationBuilder.DropTable(
                 name: "Countries");

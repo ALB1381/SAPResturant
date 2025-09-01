@@ -47,15 +47,19 @@ namespace SAPResturant.Data.Migrations
 
             modelBuilder.Entity("SAPResturant.Data.Entities.DeleteHistory", b =>
                 {
-                    b.Property<int>("HistoryId")
-                        .HasColumnType("int");
+                    b.Property<long>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("HistoryId"));
 
                     b.Property<int>("DeletedRow")
                         .HasColumnType("int");
 
                     b.Property<string>("TableName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("HistoryId");
 
@@ -64,27 +68,34 @@ namespace SAPResturant.Data.Migrations
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Log", b =>
                 {
-                    b.Property<int>("LogId")
-                        .HasColumnType("int");
+                    b.Property<long>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LogId"));
 
                     b.Property<string>("Command")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("WhateRole")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("WhichTable")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("LogId");
 
@@ -215,6 +226,71 @@ namespace SAPResturant.Data.Migrations
                     b.HasIndex("OwnerTransactionId");
 
                     b.ToTable("SubTransactions");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.Ticket", b =>
+                {
+                    b.Property<int>("TicketID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TicketCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TicketHeader")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("TicketModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TicketText")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("TicketID");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("TicketCategoryId");
+
+                    b.HasIndex("TicketModelId");
+
+                    b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketCategory", b =>
+                {
+                    b.Property<int>("TicketCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TicketCategoryText")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("TicketCategoryId");
+
+                    b.ToTable("TicketCategories");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketModel", b =>
+                {
+                    b.Property<int>("TicketModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TicketModelText")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("TicketModelId");
+
+                    b.ToTable("TicketModels");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Branch", b =>
@@ -374,6 +450,29 @@ namespace SAPResturant.Data.Migrations
                     b.Navigation("OwnerTransaction");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.Ticket", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Owners.Owner", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("OwnerId");
+
+                    b.HasOne("SAPResturant.Data.Entities.Owners.Tickets.TicketCategory", "TicketCategories")
+                        .WithMany("Tickets")
+                        .HasForeignKey("TicketCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Owners.Tickets.TicketModel", "TicketModel")
+                        .WithMany("Tickets")
+                        .HasForeignKey("TicketModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketCategories");
+
+                    b.Navigation("TicketModel");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Branch", b =>
                 {
                     b.HasOne("SAPResturant.Data.Entities.Resturants.BranchType", "BranchType")
@@ -429,12 +528,24 @@ namespace SAPResturant.Data.Migrations
 
                     b.Navigation("Resturants");
 
+                    b.Navigation("Tickets");
+
                     b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Owners.OwnerTransaction", b =>
                 {
                     b.Navigation("SubTransactions");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketCategory", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketModel", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.BranchType", b =>

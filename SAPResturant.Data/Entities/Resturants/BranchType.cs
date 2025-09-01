@@ -11,7 +11,6 @@ namespace SAPResturant.Data.Entities.Resturants
 
 
         [MaxLength(100)]
-        [DataType("nvarchar(100)")]
         public string Type { get; set; }
 
         public List<Branch> Branches { get; set; }

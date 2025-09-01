@@ -10,12 +10,10 @@ namespace SAPResturant.Data.Entities.Owners
 
         [Required]
         [MaxLength(20)]
-        [DataType("nvarchar(20)")]
         public string NotificationReason { get; set; }
 
         [Required]
         [MaxLength(300)]
-        [DataType("nvarchar(300)")]
         public string Text { get; set; }
 
         public DateTime NotificationDate { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SAPResturant.Data.Entities;
 using SAPResturant.Data.Entities.Owners;
+using SAPResturant.Data.Entities.Owners.Tickets;
 using SAPResturant.Data.Entities.Resturants;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,9 @@ namespace SAPResturant.Data.Context
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<DeleteHistory> DeleteHistories { get; set; }
         public DbSet<Log> Logs { get; set; }
-
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketCategory> TicketCategories { get; set; }
+        public DbSet<TicketModel> TicketModels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
