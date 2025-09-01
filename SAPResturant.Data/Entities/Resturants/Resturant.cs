@@ -20,17 +20,16 @@ namespace SAPResturant.Data.Entities.Resturants
         public string MainResturantAddress { get; set; }
         
         public int OwnerId { get; set; }
-        public int CityId { get; set; }
+
 
         #region Rel
 
         [ForeignKey("OwnerId")]
         public Owner Owner { get; set; }
 
-        public List<Branch> Branches { get; set; }
+        public List<Branch>? Branches { get; set; }
 
-        [ForeignKey("CityId")]
-        public City City { get; set; }
+  
         #endregion
 
     }

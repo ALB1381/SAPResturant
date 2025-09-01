@@ -16,10 +16,9 @@ namespace SAPResturant.Data.Entities.Owners
         public int SubTransactionPrice { get; set; }
         
         public DateOnly SubTransactionDate { get; set; }
+        public bool IsPayed { get; set; }
 
         public int OwnerTransactionId { get; set; }
-
-        public bool IsPayed { get; set; }
 
         [MaxLength(100)]
         [DataType("nvarchar(100)")]

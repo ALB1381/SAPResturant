@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SAPResturant.Data.Entities;
+using SAPResturant.Data.Entities.Owners;
+using SAPResturant.Data.Entities.Resturants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +17,22 @@ namespace SAPResturant.Data.Context
         {
             
         }
+
+
+
+        public DbSet<Owner> Owners { get; set; }
+        public DbSet<OwnerNotification> OwnerNotifications { get; set; }
+        public DbSet<OwnerTransaction> OwnerTransactions { get; set; }
+        public DbSet<SubTransaction> SubTransactions { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<BranchType> BranchTypes { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Resturant> Resturants { get; set; }
+        public DbSet<Administrator> Administrators { get; set; }
+        public DbSet<DeleteHistory> DeleteHistories { get; set; }
+        public DbSet<Log> Logs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +51,8 @@ namespace SAPResturant.Data.Context
                     }
                 }
             }
+
+            modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId=1,Type="Cafe"},new BranchType() { BranchTypeId=2,Type="Resturant"},new BranchType() { BranchTypeId=3,Type="Cafe & Resturant"});
         }
     }
 }

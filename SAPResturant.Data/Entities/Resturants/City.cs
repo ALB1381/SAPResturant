@@ -18,7 +18,7 @@ namespace SAPResturant.Data.Entities.Resturants
 
         [ForeignKey("CountryId")]
         public Country Country { get; set; }
-        public List<Resturant> Resturants { get; set; }
+        public List<Branch> Branches { get; set; }
 
     }
 }

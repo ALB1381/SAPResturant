@@ -31,6 +31,8 @@ namespace SAPResturant.Data.Entities.Owners
         [DataType("nvarchar(100)")]
         public string OwnerUserName { get; set; }
 
+        public DateTime OwnerRegisterDate { get; set; }
+
         [Required]
         public byte[] OwnerPasswordHash { get; set; }
 
@@ -38,10 +40,10 @@ namespace SAPResturant.Data.Entities.Owners
         public byte[] OwnerPasswordSalt { get; set; }
 
         // An Owner can have multiple Restaurants and a restaurant can have multiple Sections
-        public List<Resturant> Resturants { get; set; }
+        public List<Resturant>? Resturants { get; set; }
         public bool IsOwnerActive { get; set; }
-        public List<Transaction> Transactions { get; set; }
+        public List<OwnerTransaction>? Transactions { get; set; }
 
-        public List<OwnerNotification> OwnerNotifications { get; set; }
+        public List<OwnerNotification>? OwnerNotifications { get; set; }
     }
 }
