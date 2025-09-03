@@ -26,7 +26,6 @@ namespace SAPResturant.Data.Entities.Resturants
         public Owner Owner { get; set; }
 
         public List<Branch>? Branches { get; set; }
-
   
         #endregion
 

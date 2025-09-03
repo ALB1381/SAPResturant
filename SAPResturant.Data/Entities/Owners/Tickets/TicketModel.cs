@@ -10,6 +10,6 @@ namespace SAPResturant.Data.Entities.Owners.Tickets
         [MaxLength(100)]
         public string TicketModelText { get; set; }
 
-        public List<Ticket> Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; }
     }
 }

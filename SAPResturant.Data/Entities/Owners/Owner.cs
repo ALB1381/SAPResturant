@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -37,12 +38,15 @@ namespace SAPResturant.Data.Entities.Owners
         [Required]
         public byte[] OwnerPasswordSalt { get; set; }
 
+        public bool IsOwnerActive { get; set; }
+
         // An Owner can have multiple Restaurants and a restaurant can have multiple Sections
         public List<Resturant>? Resturants { get; set; }
-        public bool IsOwnerActive { get; set; }
+
         public List<OwnerTransaction>? Transactions { get; set; }
 
         public List<OwnerNotification>? OwnerNotifications { get; set; }
-        public List<Ticket> Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; }
+
     }
 }

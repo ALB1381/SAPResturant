@@ -3,6 +3,8 @@ using SAPResturant.Data.Entities;
 using SAPResturant.Data.Entities.Owners;
 using SAPResturant.Data.Entities.Owners.Tickets;
 using SAPResturant.Data.Entities.Resturants;
+using SAPResturant.Data.Entities.Resturants.Members;
+using SAPResturant.Data.Entities.Resturants.Members.Shiftings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,7 @@ namespace SAPResturant.Data.Context
     {
         public SAPResturantContext(DbContextOptions<SAPResturantContext> options) : base(options)
         {
-            
+
         }
 
 
@@ -36,7 +38,11 @@ namespace SAPResturant.Data.Context
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketCategory> TicketCategories { get; set; }
         public DbSet<TicketModel> TicketModels { get; set; }
-
+        public DbSet<Shifting> Shiftings { get; set; }
+        public DbSet<ArrivalDepartureHour> ArrivalDepartureHours { get; set; }
+        public DbSet<Memeber> Memebers { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -54,8 +60,18 @@ namespace SAPResturant.Data.Context
                     }
                 }
             }
+            modelBuilder.Entity<ArrivalDepartureHour>()
+         .HasOne(a => a.Memeber)
+         .WithMany()
+         .HasForeignKey(a => a.MemeberId)
+         .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.NoAction
 
-            modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId=1,Type="Cafe"},new BranchType() { BranchTypeId=2,Type="Resturant"},new BranchType() { BranchTypeId=3,Type="Cafe & Resturant"});
+            modelBuilder.Entity<ArrivalDepartureHour>()
+                .HasOne(a => a.Branch)
+                .WithMany()
+                .HasForeignKey(a => a.BranchId)
+                .OnDelete(DeleteBehavior.Cascade); // keep cascade only on one
+            modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId = 1, Type = "Cafe" }, new BranchType() { BranchTypeId = 2, Type = "Resturant" }, new BranchType() { BranchTypeId = 3, Type = "Cafe & Resturant" });
         }
     }
 }

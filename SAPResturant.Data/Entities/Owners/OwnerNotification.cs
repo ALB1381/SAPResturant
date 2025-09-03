@@ -18,6 +18,8 @@ namespace SAPResturant.Data.Entities.Owners
 
         public DateTime NotificationDate { get; set; }
 
+        public bool IsRead { get; set; }
+
         public int OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]

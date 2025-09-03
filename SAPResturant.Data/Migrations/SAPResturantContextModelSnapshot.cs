@@ -149,6 +149,9 @@ namespace SAPResturant.Data.Migrations
                     b.Property<int>("NotidicationId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
 
@@ -233,7 +236,13 @@ namespace SAPResturant.Data.Migrations
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<int>("TicketCategoryId")
@@ -252,9 +261,17 @@ namespace SAPResturant.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<DateTime>("TicketTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("WasItResponse")
+                        .HasColumnType("bit");
+
                     b.HasKey("TicketID");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("TicketCategoryId");
 
@@ -392,6 +409,158 @@ namespace SAPResturant.Data.Migrations
                     b.ToTable("Countries");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.ArrivalDepartureHour", b =>
+                {
+                    b.Property<int>("ArrivalHourId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BranchId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DepartureHour")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("MemeberId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("MemeberId1")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ArrivalHourId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("BranchId1");
+
+                    b.HasIndex("MemeberId");
+
+                    b.HasIndex("MemeberId1");
+
+                    b.ToTable("ArrivalDepartureHours");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Memeber", b =>
+                {
+                    b.Property<long>("MemeberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MemeberId"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DeletedTIme")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MemberAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int?>("MemberAge")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MemberFullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("MemberPasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("MemberPasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("MemberPhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("MemberRole")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MemberUserName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MemeberId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("MemberRole");
+
+                    b.ToTable("Memebers");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Shiftings.Shifting", b =>
+                {
+                    b.Property<int>("ShiftingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("MemberId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ShiftEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ShiftStart")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ShiftingId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Shiftings");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>
                 {
                     b.Property<int>("ResturantId")
@@ -456,6 +625,10 @@ namespace SAPResturant.Data.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("OwnerId");
 
+                    b.HasOne("SAPResturant.Data.Entities.Owners.Tickets.Ticket", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("ParentId");
+
                     b.HasOne("SAPResturant.Data.Entities.Owners.Tickets.TicketCategory", "TicketCategories")
                         .WithMany("Tickets")
                         .HasForeignKey("TicketCategoryId")
@@ -511,6 +684,71 @@ namespace SAPResturant.Data.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.ArrivalDepartureHour", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", null)
+                        .WithMany("ArrivalDepartureHours")
+                        .HasForeignKey("BranchId1");
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", "Memeber")
+                        .WithMany()
+                        .HasForeignKey("MemeberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", null)
+                        .WithMany("ArrivalDepartureHours")
+                        .HasForeignKey("MemeberId1");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Memeber");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Memeber", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", "Branch")
+                        .WithMany("Memebers")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Role", "Role")
+                        .WithMany("Memebers")
+                        .HasForeignKey("MemberRole")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Shiftings.Shifting", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", "Branch")
+                        .WithMany("Shiftings")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", "Memeber")
+                        .WithMany("Shiftings")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Memeber");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>
                 {
                     b.HasOne("SAPResturant.Data.Entities.Owners.Owner", "Owner")
@@ -538,6 +776,11 @@ namespace SAPResturant.Data.Migrations
                     b.Navigation("SubTransactions");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.Ticket", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketCategory", b =>
                 {
                     b.Navigation("Tickets");
@@ -546,6 +789,15 @@ namespace SAPResturant.Data.Migrations
             modelBuilder.Entity("SAPResturant.Data.Entities.Owners.Tickets.TicketModel", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Branch", b =>
+                {
+                    b.Navigation("ArrivalDepartureHours");
+
+                    b.Navigation("Memebers");
+
+                    b.Navigation("Shiftings");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.BranchType", b =>
@@ -561,6 +813,18 @@ namespace SAPResturant.Data.Migrations
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Country", b =>
                 {
                     b.Navigation("Cities");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Memeber", b =>
+                {
+                    b.Navigation("ArrivalDepartureHours");
+
+                    b.Navigation("Shiftings");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Role", b =>
+                {
+                    b.Navigation("Memebers");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>

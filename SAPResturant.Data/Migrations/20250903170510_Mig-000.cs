@@ -102,6 +102,30 @@ namespace SAPResturant.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.PermissionId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TicketCategories",
                 columns: table => new
                 {
@@ -152,6 +176,7 @@ namespace SAPResturant.Data.Migrations
                     NotificationReason = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Text = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     NotificationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
                     OwnerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -216,6 +241,10 @@ namespace SAPResturant.Data.Migrations
                     TicketText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     TicketModelId = table.Column<int>(type: "int", nullable: false),
                     TicketCategoryId = table.Column<int>(type: "int", nullable: false),
+                    TicketTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WasItResponse = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     OwnerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -238,6 +267,11 @@ namespace SAPResturant.Data.Migrations
                         principalTable: "TicketModels",
                         principalColumn: "TicketModelId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Tickets_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Tickets",
+                        principalColumn: "TicketID");
                 });
 
             migrationBuilder.CreateTable(
@@ -296,6 +330,108 @@ namespace SAPResturant.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Memebers",
+                columns: table => new
+                {
+                    MemeberId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberFullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    MemberUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    MemberPasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    MemberPasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MemberPhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    MemberAge = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedTIme = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MemberAddress = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    MemberRole = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Memebers", x => x.MemeberId);
+                    table.ForeignKey(
+                        name: "FK_Memebers_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Memebers_Roles_MemberRole",
+                        column: x => x.MemberRole,
+                        principalTable: "Roles",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArrivalDepartureHours",
+                columns: table => new
+                {
+                    ArrivalHourId = table.Column<int>(type: "int", nullable: false),
+                    ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DepartureHour = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MemeberId = table.Column<long>(type: "bigint", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    BranchId1 = table.Column<int>(type: "int", nullable: true),
+                    MemeberId1 = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArrivalDepartureHours", x => x.ArrivalHourId);
+                    table.ForeignKey(
+                        name: "FK_ArrivalDepartureHours_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArrivalDepartureHours_Branches_BranchId1",
+                        column: x => x.BranchId1,
+                        principalTable: "Branches",
+                        principalColumn: "BranchId");
+                    table.ForeignKey(
+                        name: "FK_ArrivalDepartureHours_Memebers_MemeberId",
+                        column: x => x.MemeberId,
+                        principalTable: "Memebers",
+                        principalColumn: "MemeberId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ArrivalDepartureHours_Memebers_MemeberId1",
+                        column: x => x.MemeberId1,
+                        principalTable: "Memebers",
+                        principalColumn: "MemeberId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shiftings",
+                columns: table => new
+                {
+                    ShiftingId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    MemberId = table.Column<long>(type: "bigint", nullable: false),
+                    ShiftStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShiftEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shiftings", x => x.ShiftingId);
+                    table.ForeignKey(
+                        name: "FK_Shiftings_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Shiftings_Memebers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Memebers",
+                        principalColumn: "MemeberId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "BranchTypes",
                 columns: new[] { "BranchTypeId", "Type" },
@@ -305,6 +441,26 @@ namespace SAPResturant.Data.Migrations
                     { 2, "Resturant" },
                     { 3, "Cafe & Resturant" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArrivalDepartureHours_BranchId",
+                table: "ArrivalDepartureHours",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArrivalDepartureHours_BranchId1",
+                table: "ArrivalDepartureHours",
+                column: "BranchId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArrivalDepartureHours_MemeberId",
+                table: "ArrivalDepartureHours",
+                column: "MemeberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArrivalDepartureHours_MemeberId1",
+                table: "ArrivalDepartureHours",
+                column: "MemeberId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Branches_BranchTypeId",
@@ -327,6 +483,16 @@ namespace SAPResturant.Data.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Memebers_BranchId",
+                table: "Memebers",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Memebers_MemberRole",
+                table: "Memebers",
+                column: "MemberRole");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OwnerNotifications_OwnerId",
                 table: "OwnerNotifications",
                 column: "OwnerId");
@@ -342,6 +508,16 @@ namespace SAPResturant.Data.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shiftings_BranchId",
+                table: "Shiftings",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shiftings_MemberId",
+                table: "Shiftings",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubTransactions_OwnerTransactionId",
                 table: "SubTransactions",
                 column: "OwnerTransactionId");
@@ -350,6 +526,11 @@ namespace SAPResturant.Data.Migrations
                 name: "IX_Tickets_OwnerId",
                 table: "Tickets",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_ParentId",
+                table: "Tickets",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_TicketCategoryId",
@@ -369,7 +550,7 @@ namespace SAPResturant.Data.Migrations
                 name: "Administrators");
 
             migrationBuilder.DropTable(
-                name: "Branches");
+                name: "ArrivalDepartureHours");
 
             migrationBuilder.DropTable(
                 name: "DeleteHistories");
@@ -381,19 +562,19 @@ namespace SAPResturant.Data.Migrations
                 name: "OwnerNotifications");
 
             migrationBuilder.DropTable(
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "Shiftings");
+
+            migrationBuilder.DropTable(
                 name: "SubTransactions");
 
             migrationBuilder.DropTable(
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "BranchTypes");
-
-            migrationBuilder.DropTable(
-                name: "Cities");
-
-            migrationBuilder.DropTable(
-                name: "Resturants");
+                name: "Memebers");
 
             migrationBuilder.DropTable(
                 name: "OwnerTransactions");
@@ -403,6 +584,21 @@ namespace SAPResturant.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TicketModels");
+
+            migrationBuilder.DropTable(
+                name: "Branches");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "BranchTypes");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "Resturants");
 
             migrationBuilder.DropTable(
                 name: "Countries");
