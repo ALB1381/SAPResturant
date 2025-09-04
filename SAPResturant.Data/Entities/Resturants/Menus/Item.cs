@@ -34,10 +34,10 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         public ItemGroup ItemGroup { get; set; }
 
         [ForeignKey("ItemSubGroupId")]
-        public ItemSubGroup? ItemSubGroup { get; set; }
+        public ItemGroup? ItemSubGroup { get; set; }
 
-        public List<ItemModels> ItemModels { get; set; }
-        public List<ItemExteraConnection> ItemExteraConnections { get; set; }
+        public List<ItemModels>? ItemModels { get; set; }
+        public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
 
         [ForeignKey("MenuId")]
         public Menu Menu { get; set; }

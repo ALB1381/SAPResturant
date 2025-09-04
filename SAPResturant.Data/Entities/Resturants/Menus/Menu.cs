@@ -15,6 +15,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
 
         public int BranchId { get; set; }
 
+        public List<ItemGroup> ItemGroups { get; set; }
         public List<Item> Items { get; set; }
 
         [ForeignKey("BranchId")]

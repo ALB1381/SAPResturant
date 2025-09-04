@@ -8,8 +8,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         [Key]
         public int GroupId { get; set; }
 
-       
-        [MaxLength(50]
+        [MaxLength(50)]
         public string GroupName { get; set; }
 
         public int? ParentId { get; set; }
@@ -22,5 +21,13 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
 
         [InverseProperty("ItemSubGroup")]
         public List<Item>? SubItems { get; set; }
+
+        [MaxLength(50)]
+        public string? VisualIdentityColor { get; set; }
+
+        public int MenuId { get; set; }
+
+        [ForeignKey("MenuId")]
+        public Menu Menu { get; set; }
     }
 }

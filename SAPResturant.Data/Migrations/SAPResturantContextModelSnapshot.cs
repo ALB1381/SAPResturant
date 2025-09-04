@@ -561,6 +561,171 @@ namespace SAPResturant.Data.Migrations
                     b.ToTable("Shiftings");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ExteraItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExteraOnItemTitle")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("ExteraItems");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Item", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemDescription")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ItemGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemImage")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ItemIngrediants")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ItemPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ItemSubGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MenuId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemId");
+
+                    b.HasIndex("ItemGroupId");
+
+                    b.HasIndex("ItemSubGroupId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("MenuId1");
+
+                    b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemExteraConnection", b =>
+                {
+                    b.Property<int>("IECId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExteraItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ItemId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("IECId");
+
+                    b.HasIndex("ExteraItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemId1");
+
+                    b.ToTable("ItemExteraConnections");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", b =>
+                {
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VisualIdentityColor")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("GroupId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("ItemGroups");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemModels", b =>
+                {
+                    b.Property<int>("ItemModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemThisModelPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ItemModelId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemModels");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Menu", b =>
+                {
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuId");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Menus");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>
                 {
                     b.Property<int>("ResturantId")
@@ -749,6 +914,106 @@ namespace SAPResturant.Data.Migrations
                     b.Navigation("Memeber");
                 });
 
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ExteraItem", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Item", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", "ItemGroup")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", "ItemSubGroup")
+                        .WithMany("SubItems")
+                        .HasForeignKey("ItemSubGroupId");
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Menu", null)
+                        .WithMany("Items")
+                        .HasForeignKey("MenuId1");
+
+                    b.Navigation("ItemGroup");
+
+                    b.Navigation("ItemSubGroup");
+
+                    b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemExteraConnection", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.ExteraItem", "ExteraItem")
+                        .WithMany("ItemExteraConnections")
+                        .HasForeignKey("ExteraItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Item", null)
+                        .WithMany("ItemExteraConnections")
+                        .HasForeignKey("ItemId1");
+
+                    b.Navigation("ExteraItem");
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Menu", "Menu")
+                        .WithMany("ItemGroups")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", null)
+                        .WithMany("ItemParenttGroups")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemModels", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Menus.Item", "Item")
+                        .WithMany("ItemModels")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Menu", b =>
+                {
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>
                 {
                     b.HasOne("SAPResturant.Data.Entities.Owners.Owner", "Owner")
@@ -825,6 +1090,34 @@ namespace SAPResturant.Data.Migrations
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.Role", b =>
                 {
                     b.Navigation("Memebers");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ExteraItem", b =>
+                {
+                    b.Navigation("ItemExteraConnections");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Item", b =>
+                {
+                    b.Navigation("ItemExteraConnections");
+
+                    b.Navigation("ItemModels");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.ItemGroup", b =>
+                {
+                    b.Navigation("ItemParenttGroups");
+
+                    b.Navigation("Items");
+
+                    b.Navigation("SubItems");
+                });
+
+            modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Menus.Menu", b =>
+                {
+                    b.Navigation("ItemGroups");
+
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Resturant", b =>

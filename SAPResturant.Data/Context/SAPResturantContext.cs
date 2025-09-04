@@ -5,6 +5,7 @@ using SAPResturant.Data.Entities.Owners.Tickets;
 using SAPResturant.Data.Entities.Resturants;
 using SAPResturant.Data.Entities.Resturants.Members;
 using SAPResturant.Data.Entities.Resturants.Members.Shiftings;
+using SAPResturant.Data.Entities.Resturants.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,12 @@ namespace SAPResturant.Data.Context
         public DbSet<Memeber> Memebers { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
+        public DbSet<ExteraItem> ExteraItems { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemExteraConnection> ItemExteraConnections { get; set; }
+        public DbSet<ItemGroup> ItemGroups { get; set; }
+        public DbSet<ItemModels> ItemModels { get; set; }
+        public DbSet<Menu> Menus { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -72,6 +79,18 @@ namespace SAPResturant.Data.Context
         .WithMany()
         .HasForeignKey(s => s.MemberId)
         .OnDelete(DeleteBehavior.Restrict); // <-- This breaks the new cycle
+
+            modelBuilder.Entity<Item>()
+                .HasOne(adh => adh.Menu)
+                .WithMany()
+                .HasForeignKey(adh => adh.MenuId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ItemExteraConnection>()
+                .HasOne(adh => adh.Item)
+                .WithMany()
+                .HasForeignKey(adh => adh.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId = 1, Type = "Cafe" }, new BranchType() { BranchTypeId = 2, Type = "Resturant" }, new BranchType() { BranchTypeId = 3, Type = "Cafe & Resturant" });
         }
     }
