@@ -375,7 +375,6 @@ namespace SAPResturant.Data.Migrations
                     DepartureHour = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MemeberId = table.Column<long>(type: "bigint", nullable: false),
                     BranchId = table.Column<int>(type: "int", nullable: false),
-                    BranchId1 = table.Column<int>(type: "int", nullable: true),
                     MemeberId1 = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -387,11 +386,6 @@ namespace SAPResturant.Data.Migrations
                         principalTable: "Branches",
                         principalColumn: "BranchId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ArrivalDepartureHours_Branches_BranchId1",
-                        column: x => x.BranchId1,
-                        principalTable: "Branches",
-                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_ArrivalDepartureHours_Memebers_MemeberId",
                         column: x => x.MemeberId,
@@ -413,7 +407,8 @@ namespace SAPResturant.Data.Migrations
                     BranchId = table.Column<int>(type: "int", nullable: false),
                     MemberId = table.Column<long>(type: "bigint", nullable: false),
                     ShiftStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ShiftEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MemeberId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -429,7 +424,12 @@ namespace SAPResturant.Data.Migrations
                         column: x => x.MemberId,
                         principalTable: "Memebers",
                         principalColumn: "MemeberId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Shiftings_Memebers_MemeberId",
+                        column: x => x.MemeberId,
+                        principalTable: "Memebers",
+                        principalColumn: "MemeberId");
                 });
 
             migrationBuilder.InsertData(
@@ -446,11 +446,6 @@ namespace SAPResturant.Data.Migrations
                 name: "IX_ArrivalDepartureHours_BranchId",
                 table: "ArrivalDepartureHours",
                 column: "BranchId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ArrivalDepartureHours_BranchId1",
-                table: "ArrivalDepartureHours",
-                column: "BranchId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ArrivalDepartureHours_MemeberId",
@@ -516,6 +511,11 @@ namespace SAPResturant.Data.Migrations
                 name: "IX_Shiftings_MemberId",
                 table: "Shiftings",
                 column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shiftings_MemeberId",
+                table: "Shiftings",
+                column: "MemeberId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubTransactions_OwnerTransactionId",

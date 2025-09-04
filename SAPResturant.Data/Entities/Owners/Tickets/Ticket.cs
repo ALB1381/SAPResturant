@@ -27,7 +27,7 @@ namespace SAPResturant.Data.Entities.Owners.Tickets
         public int? ParentId { get; set; } // Nullable to allow root tickets
 
         [ForeignKey("ParentId")]
-        public List<Ticket> Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; }
 
         // Navigation properties
         [ForeignKey("TicketModelId")]

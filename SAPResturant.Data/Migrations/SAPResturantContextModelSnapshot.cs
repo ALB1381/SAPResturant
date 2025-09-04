@@ -420,9 +420,6 @@ namespace SAPResturant.Data.Migrations
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BranchId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DepartureHour")
                         .HasColumnType("datetime2");
 
@@ -435,8 +432,6 @@ namespace SAPResturant.Data.Migrations
                     b.HasKey("ArrivalHourId");
 
                     b.HasIndex("BranchId");
-
-                    b.HasIndex("BranchId1");
 
                     b.HasIndex("MemeberId");
 
@@ -546,6 +541,9 @@ namespace SAPResturant.Data.Migrations
                     b.Property<long>("MemberId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("MemeberId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("ShiftEnd")
                         .HasColumnType("datetime2");
 
@@ -557,6 +555,8 @@ namespace SAPResturant.Data.Migrations
                     b.HasIndex("BranchId");
 
                     b.HasIndex("MemberId");
+
+                    b.HasIndex("MemeberId");
 
                     b.ToTable("Shiftings");
                 });
@@ -687,14 +687,10 @@ namespace SAPResturant.Data.Migrations
             modelBuilder.Entity("SAPResturant.Data.Entities.Resturants.Members.ArrivalDepartureHour", b =>
                 {
                     b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", "Branch")
-                        .WithMany()
+                        .WithMany("ArrivalDepartureHours")
                         .HasForeignKey("BranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("SAPResturant.Data.Entities.Resturants.Branch", null)
-                        .WithMany("ArrivalDepartureHours")
-                        .HasForeignKey("BranchId1");
 
                     b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", "Memeber")
                         .WithMany()
@@ -739,10 +735,14 @@ namespace SAPResturant.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", "Memeber")
-                        .WithMany("Shiftings")
+                        .WithMany()
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("SAPResturant.Data.Entities.Resturants.Members.Memeber", null)
+                        .WithMany("Shiftings")
+                        .HasForeignKey("MemeberId");
 
                     b.Navigation("Branch");
 

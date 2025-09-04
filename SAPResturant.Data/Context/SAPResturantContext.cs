@@ -61,16 +61,17 @@ namespace SAPResturant.Data.Context
                 }
             }
             modelBuilder.Entity<ArrivalDepartureHour>()
-         .HasOne(a => a.Memeber)
-         .WithMany()
-         .HasForeignKey(a => a.MemeberId)
-         .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.NoAction
+           .HasOne(adh => adh.Memeber) // An ArrivalDepartureHour has one Memeber
+           .WithMany() // A Memeber can have many ArrivalDepartureHour records (assuming no collection on Memeber side)
+           .HasForeignKey(adh => adh.MemeberId)
+           .OnDelete(DeleteBehavior.Restrict); // <-- This is the magic line!
 
-            modelBuilder.Entity<ArrivalDepartureHour>()
-                .HasOne(a => a.Branch)
-                .WithMany()
-                .HasForeignKey(a => a.BranchId)
-                .OnDelete(DeleteBehavior.Cascade); // keep cascade only on one
+
+            modelBuilder.Entity<Shifting>() // <-- Assuming your class is named 'Shifting'
+        .HasOne(s => s.Memeber)   // <-- Assuming you have a 'Member' navigation property
+        .WithMany()
+        .HasForeignKey(s => s.MemberId)
+        .OnDelete(DeleteBehavior.Restrict); // <-- This breaks the new cycle
             modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId = 1, Type = "Cafe" }, new BranchType() { BranchTypeId = 2, Type = "Resturant" }, new BranchType() { BranchTypeId = 3, Type = "Cafe & Resturant" });
         }
     }
