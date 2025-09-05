@@ -50,6 +50,7 @@ namespace SAPResturant.Data.Context
         public DbSet<ItemGroup> ItemGroups { get; set; }
         public DbSet<ItemModels> ItemModels { get; set; }
         public DbSet<Menu> Menus { get; set; }
+        public DbSet<Table> Tables { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

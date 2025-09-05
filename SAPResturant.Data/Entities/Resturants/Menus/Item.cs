@@ -41,5 +41,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
 
         [ForeignKey("MenuId")]
         public Menu Menu { get; set; }
+
+
     }
 }

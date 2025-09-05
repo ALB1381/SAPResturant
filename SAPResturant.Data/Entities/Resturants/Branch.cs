@@ -1,5 +1,6 @@
 ﻿using SAPResturant.Data.Entities.Resturants.Members;
 using SAPResturant.Data.Entities.Resturants.Members.Shiftings;
+using SAPResturant.Data.Entities.Resturants.Orders;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,7 +15,8 @@ namespace SAPResturant.Data.Entities.Resturants
         [MaxLength(400)]
         public string? SectionAddress { get; set; }
 
-
+        //Each Resturant have many tables however we dosent need a table to keping tables
+        //but we need it to submit it in Orders and this the probelm
   
         public int CityId { get; set; }
         public int BranchTypeId { get; set; }
@@ -33,6 +35,10 @@ namespace SAPResturant.Data.Entities.Resturants
         public List<Memeber>? Memebers { get; set; }
         public List<Shifting>? Shiftings { get; set; }
         public List<ArrivalDepartureHour>? ArrivalDepartureHours { get; set; }
+        public List<Table> Tables { get; set; }
+        public List<Customer> Customers { get; set; }
+        public List<InnerOrder> InnerOrders { get; set; }
+        public List<OnlineOrder> OnlineOrders { get; set; }
 
         #endregion
 
