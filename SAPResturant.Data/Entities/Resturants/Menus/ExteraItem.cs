@@ -21,7 +21,6 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
 
 
-
         public int MenuId { get; set; }
 
         [ForeignKey("MenuId")]
