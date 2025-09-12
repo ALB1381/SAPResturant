@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAPResturant.Inner.Data.Entities.Orders.Space.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,7 +22,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
         public string? TableName { get; set; }
         public int CountOfSeats { get; set; }
 
-        public int PriceOfReservation { get; set; }
+        public int? PriceOfReservation { get; set; }
         public int? PeriodHourOfReservation { get; set; }
       
         public int? ResturantSectionId { get; set; }
@@ -32,7 +33,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
         [ForeignKey("TableStatusId")]
         public TableStatus? TableStatus { get; set; }
 
-        public List<TableReservation>? Reservations { get; set; }
+        public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
 
 
 

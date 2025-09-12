@@ -26,7 +26,7 @@ namespace SAPResturant.Data.Entities.Resturants
 
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-        public List<Order>? Orders { get; set; }
+        //public List<Order>? Orders { get; set; }
 
     }
 }

@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using SAPResturant.Data.Context;
+using SAPResturant.Inner.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<SAPResturantContext>(options =>
+builder.Services.AddDbContext<SAPInnerResturantContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SAPConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SAPInnerConnection"));
 }
 );
 builder.Services.AddControllers();

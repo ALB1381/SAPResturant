@@ -1,4 +1,5 @@
 ﻿using SAPResturant.Inner.Data.Entities.Customers;
+using SAPResturant.Inner.Data.Entities.Orders.Space.Connection;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +20,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
         public Customer Customer { get; set; }
 
         public List<Transaction>? Transactions { get; set; }
-        public List<Table> Tables { get; set; }
+        public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
 
     }
 }

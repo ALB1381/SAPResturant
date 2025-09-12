@@ -22,6 +22,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders
 
         [ForeignKey("OrderId")]
         public InnerOrder InnerOrder { get; set; }
+
         public int PaymentMethodId { get; set; }
 
         [ForeignKey("PaymentMethodId")]

@@ -19,11 +19,10 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int RawPrice { get; set; }
         public int TaxPrice { get; set; }
         public int SumPrice { get; set; }
-        public int OrderStatusId { get; set; }
 
-
+        public int? OrderStatusId { get; set; }
         [ForeignKey("OrderStatusId")]
-        public OrderStatus OrderStatus { get; set; }
+        public OrderStatus? OrderStatus { get; set; }
 
         public int? CustomerId { get; set; }
         [ForeignKey("CustomerId")]

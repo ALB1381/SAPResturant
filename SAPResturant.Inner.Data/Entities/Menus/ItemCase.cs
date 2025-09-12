@@ -1,5 +1,6 @@
 ﻿using SAPResturant.Inner.Data.Entities.Orders;
 using SAPResturant.Inner.Data.Entities.Orders.Discount;
+using SAPResturant.Inner.Data.Entities.Warehouse.Connection;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,7 +14,7 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         [MaxLength(50)]
         public string CaseTitle { get; set; }
         public int CasePrice { get; set; }
-
+        public int? AvaibleCount { get; set; }
         public int? DsicountId { get; set; }
         public int ItemId { get; set; }
 
@@ -23,6 +24,7 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         [ForeignKey("DsicountId")]
         public ItemDiscount? ItemDiscount { get; set; }
 
+        public List<ItemCaseInventoryConnection> ItemCaseInventoryConnections { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
         public List<SubOuterOrder>? SubOuterOrders { get; set; }
 
