@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAPResturant.Inner.Data.Entities.Orders;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -45,5 +46,6 @@ namespace SAPResturant.Inner.Data.Entities.Users
 
         public List<PlanedShift> PlanedShifts { get; set; }
         public List<Shift> Shifts { get; set; }
+        public List<InnerOrder>? InnerOrders { get; set; }
     }
 }

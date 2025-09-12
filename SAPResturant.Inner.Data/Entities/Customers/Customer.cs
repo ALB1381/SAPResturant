@@ -1,4 +1,5 @@
 ﻿using SAPResturant.Inner.Data.Entities.Orders;
+using SAPResturant.Inner.Data.Entities.Orders.Space;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -37,7 +38,8 @@ namespace SAPResturant.Inner.Data.Entities.Customers
 
         public string? Email { get; set; }
         public bool IsMan { get; set; }
-        public List<InnerOrder> InnerOrders { get; set; }
-        public List<OuterOrder> OuterOrders { get; set; }
+        public List<InnerOrder>? InnerOrders { get; set; }
+        public List<OuterOrder>? OuterOrders { get; set; }
+        public List<TableReservation>? TableReservation { get; set; }
     }
 }
