@@ -31,5 +31,8 @@ namespace SAPResturant.Inner.Data.Entities.Warehouse
         [ForeignKey("SupplierId")]
         public Supplier Supplier { get; set; }
 
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
+
     }
 }

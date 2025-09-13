@@ -32,5 +32,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
         public List<SubOuterOrder>? SubOuterOrders { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

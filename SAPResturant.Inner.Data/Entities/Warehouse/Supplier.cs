@@ -20,5 +20,8 @@ namespace SAPResturant.Inner.Data.Entities.Warehouse
 
         public List<Supplied>? Supplieds { get; set; }
         public List<Inventory>? Inventories { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

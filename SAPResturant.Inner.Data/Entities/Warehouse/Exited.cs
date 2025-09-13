@@ -23,6 +23,7 @@ namespace SAPResturant.Inner.Data.Entities.Warehouse
         [ForeignKey("InventoryId")]
         public Inventory Inventory { get; set; }
 
-
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

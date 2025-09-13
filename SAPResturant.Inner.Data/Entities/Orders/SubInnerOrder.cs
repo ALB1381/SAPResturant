@@ -34,5 +34,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int InnerOrderId { get; set; }
         [ForeignKey("InnerOrderId")]
         public InnerOrder InnerOrder { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

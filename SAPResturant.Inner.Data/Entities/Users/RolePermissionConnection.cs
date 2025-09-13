@@ -23,5 +23,8 @@ namespace SAPResturant.Inner.Data.Entities.Users
 
         [ForeignKey("PermissionId")]
         public Permission Permission { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

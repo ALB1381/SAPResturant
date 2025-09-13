@@ -20,5 +20,8 @@ namespace SAPResturant.Inner.Data.Entities.Users
 
         [ForeignKey("UserId")]
         public User User { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

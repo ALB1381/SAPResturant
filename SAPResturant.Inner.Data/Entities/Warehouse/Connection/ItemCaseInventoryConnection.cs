@@ -22,5 +22,8 @@ namespace SAPResturant.Inner.Data.Entities.Warehouse.Connection
 
         [ForeignKey("ItemCaseId")]
         public ItemCase ItemCase { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

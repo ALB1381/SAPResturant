@@ -22,5 +22,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space.Connection
 
         [ForeignKey("TableId")]
         public Table Table { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

@@ -20,5 +20,8 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         public string? GroupCardColors { get; set; }
 
         public List<Item>? Items { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

@@ -35,6 +35,9 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
 
         public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
 
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
+
 
 
 

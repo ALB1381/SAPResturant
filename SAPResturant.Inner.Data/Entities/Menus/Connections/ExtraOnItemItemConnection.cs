@@ -22,5 +22,8 @@ namespace SAPResturant.Inner.Data.Entities.Menus.Connections
 
         [ForeignKey("ExtraOnItemId")]
         public ExtraOnItem ExtraOnItem { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

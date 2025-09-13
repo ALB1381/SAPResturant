@@ -16,5 +16,8 @@ namespace SAPResturant.Inner.Data.Entities.Warehouse
         public string? GroupName { get; set; }
 
         public List<Inventory> Inventories { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

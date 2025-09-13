@@ -37,10 +37,10 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int? TableReservationId { get; set; }
         [ForeignKey("TableReservationId")]
         public TableReservation? TableReservation { get; set; }
-
-
         public bool IsPayed { get; set; }
 
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
 
     }
 }

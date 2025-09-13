@@ -32,5 +32,8 @@ namespace SAPResturant.Inner.Data.Entities.Menus
 
         public List<ItemCase>? ItemCases { get; set; }
         public List<ExtraOnItemItemConnection>? ExtraOnItemItemConnections { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

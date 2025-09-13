@@ -15,5 +15,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders
 
         public List<InnerOrder>? InnerOrders { get; set; }
         public List<OuterOrder>? OuterOrders { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

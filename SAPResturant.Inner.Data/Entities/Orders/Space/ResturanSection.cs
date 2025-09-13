@@ -13,5 +13,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
         public string? SectionDescription { get; set; }
 
         public List<Table> Tables { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

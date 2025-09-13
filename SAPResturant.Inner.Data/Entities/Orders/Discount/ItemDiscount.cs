@@ -20,5 +20,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Discount
         public short? AvaibleCount { get; set; }
         public short DiscountPercent { get; set; }
         public List<ItemCase> ItemCases { get; set; }
+
+        [MaxLength(40)]
+        public string MaderLog { get; set; }
     }
 }

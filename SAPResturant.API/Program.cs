@@ -4,9 +4,9 @@ using SAPResturant.Inner.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<SAPInnerResturantContext>(options =>
+builder.Services.AddDbContext<SAPResturantContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SAPInnerConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SAPConnection"));
 }
 );
 builder.Services.AddControllers();
