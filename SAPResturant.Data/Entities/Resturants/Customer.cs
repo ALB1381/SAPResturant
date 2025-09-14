@@ -12,7 +12,9 @@ namespace SAPResturant.Data.Entities.Resturants
     public class Customer
     {
         [Key]
-        public int CustomerId { get; set; }
+        public long CustomerId { get; set; }
+
+        public int InnerCustomerId { get; set; }
 
         [MaxLength(100)]
         public string? CustomerName { get; set; }
@@ -28,6 +30,9 @@ namespace SAPResturant.Data.Entities.Resturants
         public string? Address { get; set; }
 
         public DateTime FirstShop { get; set; }
+
+        [MaxLength(100)]
+        public string? Email { get; set; }
 
         public bool IsPhoneNumberValidated { get; set; }
 
@@ -46,5 +51,7 @@ namespace SAPResturant.Data.Entities.Resturants
         public List<InnerOrder>? InnerOrders { get; set; }
 
         public List<OnlineOrder>? OnlineOrders { get; set; }
+        public List<TableReservation> TableReservation { get; set; }
+
     }
 }

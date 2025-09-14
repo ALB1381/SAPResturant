@@ -36,6 +36,8 @@ namespace SAPResturant.Inner.Data.Entities.Customers
 
         public DateTime? SentCode { get; set; }
 
+
+        [MaxLength(100)]
         public string? Email { get; set; }
         public bool IsMan { get; set; }
         public List<InnerOrder>? InnerOrders { get; set; }

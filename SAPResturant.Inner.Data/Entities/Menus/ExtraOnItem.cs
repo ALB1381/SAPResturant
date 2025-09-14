@@ -13,7 +13,7 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         public string ExtraOnItemTitle { get; set; }
 
         [MaxLength(50)]
-        public string ExtraOnItemDescription { get; set; }
+        public string? ExtraOnItemDescription { get; set; }
 
         public int? ExtraOnItemPrice { get; set; }
 

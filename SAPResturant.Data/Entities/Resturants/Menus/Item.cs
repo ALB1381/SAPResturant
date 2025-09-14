@@ -10,6 +10,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
 {
     public class Item
     {
+        #region Columns
         [Key]
         public int ItemId { get; set; }
 
@@ -20,28 +21,30 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         public string? ItemDescription { get; set; }
         [MaxLength(200)]
         public string? ItemIngrediants { get; set; }
-        [MaxLength(200)]
+
+        [MaxLength(100)]
         public string? ItemImage { get; set; }
+        #endregion
 
-        public int? ItemPrice { get; set; }
-
+        #region Rel
         public int ItemGroupId { get; set; }
-
         public int? ItemSubGroupId { get; set; }
         public int MenuId { get; set; }
-
+        public int BranchId { get; set; }
         [ForeignKey("ItemGroupId")]
         public ItemGroup ItemGroup { get; set; }
-
         [ForeignKey("ItemSubGroupId")]
         public ItemGroup? ItemSubGroup { get; set; }
-
-        public List<ItemModels>? ItemModels { get; set; }
-        public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
 
         [ForeignKey("MenuId")]
         public Menu Menu { get; set; }
 
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
+
+        public List<ItemModels>? ItemModels { get; set; }
+        public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
+        #endregion
 
     }
 }

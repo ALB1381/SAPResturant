@@ -16,7 +16,10 @@ namespace SAPResturant.Data.Entities.Resturants
 
         [MaxLength(400)]
         public string MainResturantAddress { get; set; }
-        
+
+        [MaxLength(30)]
+        public string? ResturantLogo { get; set; }
+
         public int OwnerId { get; set; }
 
 
