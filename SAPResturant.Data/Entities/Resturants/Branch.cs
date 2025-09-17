@@ -2,6 +2,7 @@
 using SAPResturant.Data.Entities.Resturants.Members.Shiftings;
 using SAPResturant.Data.Entities.Resturants.Menus;
 using SAPResturant.Data.Entities.Resturants.Orders;
+using SAPResturant.Data.Entities.Warehouse.Connection;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -46,6 +47,15 @@ namespace SAPResturant.Data.Entities.Resturants
         public List<InnerOrder> InnerOrders { get; set; }
         public List<OnlineOrder> OnlineOrders { get; set; }
         public List<ItemExteraConnection> itemExteraConnections { get; set; }
+        public List<ItemGroup> ItemGroups { get; set; }
+        public List<ItemDiscount> ItemDiscounts { get; set; }
+        public List<TableReservation> TableReservations { get; set; }
+        public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
+        public List<ResturanSection>? ResturanSections { get; set; }
+        public List<IncomeCard> IncomeCards { get; set; }
+        public List<Pose>? Poses { get; set; }
+        public List<SubInnerOrder>? SubInnerOrders { get; set; }
+        public List<SubOnlineOrder>? SubOnlineOrders { get; set; }
         #endregion
 
     }

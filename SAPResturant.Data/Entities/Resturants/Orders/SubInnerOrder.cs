@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAPResturant.Data.Entities.Resturants.Menus;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,25 +12,31 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
     public class SubInnerOrder
     {
         [Key]
-        public int SubId { get; set; }
-        public int Quantity { get; set; }
-        public int Price { get; set; }
-        public int SumPrice { get; set; }
-        public int? ItemId { get; set; }
-        public int? ItemModelId { get; set; }  
-        public int? ExteraItemId { get; set; }
-        public int InnerOrderId { get; set; }
+        public int SubInnerOrderId { get; set; }
 
-        [ForeignKey("ItemId")]
-        public Data.Entities.Resturants.Menus.Item Item { get; set; }
+        public int Count { get; set; }
+        public int? SinglePrice { get; set; }
+        public int? SumPrice { get; set; }
+        public DateTime MadeDate { get; set; }
 
+        public DateTime CookedTime { get; set; }
+
+        public DateTime DeliveredTime { get; set; }
+
+        public int? ItemModelId { get; set; }
         [ForeignKey("ItemModelId")]
-        public Data.Entities.Resturants.Menus.ItemModels? ItemModel { get; set; }
+        public ItemModel? ItemModel { get; set; }
 
-        [ForeignKey("ExteraItemId")]
-        public Data.Entities.Resturants.Menus.ExteraItem? ExteraItem { get; set; }
+        public int? ExtraOnItemId { get; set; }
+        [ForeignKey("ExtraOnItemId")]
+        public ExteraItem? ExteraItem { get; set; }
 
+        public int InnerOrderId { get; set; }
         [ForeignKey("InnerOrderId")]
         public InnerOrder InnerOrder { get; set; }
+
+        public int BranchId { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace SAPResturant.Inner.Data.Entities.Menus
 {
     public class ItemCase
     {
+        #region Columns
         [Key]
         public int ItemCaseId { get; set; }
 
@@ -15,18 +16,23 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         public string CaseTitle { get; set; }
         public int CasePrice { get; set; }
         public int? AvaibleCount { get; set; }
-        public int? DsicountId { get; set; }
-        public int ItemId { get; set; }
+        #endregion
 
+
+        #region Rel
+        public int ItemId { get; set; }
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
+        public int? DsicountId { get; set; }
         [ForeignKey("DsicountId")]
         public ItemDiscount? ItemDiscount { get; set; }
 
-        public List<ItemCaseInventoryConnection> ItemCaseInventoryConnections { get; set; }
+        public List<ItemCaseInventoryConnection>? ItemCaseInventoryConnections { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
         public List<SubOuterOrder>? SubOuterOrders { get; set; }
+        #endregion
+
 
         [MaxLength(40)]
         public string MaderLog { get; set; }

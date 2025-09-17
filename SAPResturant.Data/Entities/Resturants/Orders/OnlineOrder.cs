@@ -11,28 +11,29 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
     public class OnlineOrder
     {
         [Key]
-        public int OnlineOrderId { get; set; }
-        public bool IsPayed { get; set; }
-        public int OrderSum { get; set; }
-
-        [MaxLength(500)]
-        public string? Description { get; set; }
+        public int OuterOrderId { get; set; }
         public DateTime OrderDate { get; set; }
-        public int? DeliveryPrice { get; set; }
-        public int Tax { get; set; }
+
         public int RawPrice { get; set; }
+        public int TaxPrice { get; set; }
+        public int SumPrice { get; set; }
+        public int DeliveryPrice { get; set; }
+        public int OrderStatusId { get; set; }
 
-        [MaxLength(500)]
-        public string DeliveryAddress { get; set; }
+        [MaxLength(800)]
+        public string DeliveredAddress { get; set; }
 
+        public bool IsSnap { get; set; }
+
+        [ForeignKey("OrderStatusId")]
+        public OrderStatus OrderStatus { get; set; }
         public int CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
+        public List<SubOnlineOrder>? SubOnlineOrders { get; set; }
         public int BranchId { get; set; }
-   
 
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-
-        [ForeignKey("CustomerId")]
-        public Customer Customer { get; set; }
     }
 }

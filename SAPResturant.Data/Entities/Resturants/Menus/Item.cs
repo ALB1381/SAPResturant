@@ -27,8 +27,8 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         #endregion
 
         #region Rel
-        public int ItemGroupId { get; set; }
-        public int? ItemSubGroupId { get; set; }
+        public long ItemGroupId { get; set; }
+        public long? ItemSubGroupId { get; set; }
         public int MenuId { get; set; }
         public int BranchId { get; set; }
         [ForeignKey("ItemGroupId")]
@@ -42,7 +42,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
 
-        public List<ItemModels>? ItemModels { get; set; }
+        public List<ItemModel>? ItemModels { get; set; }
         public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
         #endregion
 

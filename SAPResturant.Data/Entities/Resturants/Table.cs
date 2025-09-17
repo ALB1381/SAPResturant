@@ -11,22 +11,32 @@ namespace SAPResturant.Data.Entities.Resturants
 {
     public class Table
     {
+        #region Columns
         [Key]
         public int TableId { get; set; }
+        [MaxLength(50)]
+        public string? TableDescription { get; set; }
+        public int TableNumber { get; set; }
+        [MaxLength(50)]
+        public string? TableName { get; set; }
+        public int CountOfSeats { get; set; }
+        public int? PriceOfReservation { get; set; }
+        public int? PeriodHourOfReservation { get; set; }
+        #endregion
 
-        public short Capacity { get; set; }
 
-        public short TableNumber { get; set; }
-        
+        #region Rel
         public int BranchId { get; set; }
-
-
-        [MaxLength(70)]
-        public string? Location { get; set; }
-
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-        //public List<Order>? Orders { get; set; }
+        public int? ResturantSectionId { get; set; }
+        [ForeignKey("ResturantSectionId")]
+        public ResturanSection? ResturanSection { get; set; }
+        public int? TableStatusId { get; set; }
+        [ForeignKey("TableStatusId")]
+        public TableStatus? TableStatus { get; set; }
+        public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
+        #endregion
 
     }
 }

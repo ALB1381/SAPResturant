@@ -12,6 +12,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
 {
     public class Table
     {
+        #region Columns
         [Key]
         public int TableId { get; set; }
 
@@ -21,19 +22,20 @@ namespace SAPResturant.Inner.Data.Entities.Orders.Space
         [MaxLength(50)]
         public string? TableName { get; set; }
         public int CountOfSeats { get; set; }
-
         public int? PriceOfReservation { get; set; }
         public int? PeriodHourOfReservation { get; set; }
-      
+        #endregion
+
+        #region Rel
         public int? ResturantSectionId { get; set; }
         [ForeignKey("ResturantSectionId")]
         public ResturanSection? ResturanSection { get; set; }
-
         public int? TableStatusId { get; set; }
         [ForeignKey("TableStatusId")]
         public TableStatus? TableStatus { get; set; }
-
         public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
+        #endregion
+
 
         [MaxLength(40)]
         public string MaderLog { get; set; }
