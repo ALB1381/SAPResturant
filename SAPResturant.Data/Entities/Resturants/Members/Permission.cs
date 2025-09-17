@@ -12,8 +12,10 @@ namespace SAPResturant.Data.Entities.Resturants.Members
         [Key]
         public int PermissionId { get; set; }
 
-        [MaxLength(100)]
-        public string PermissionName { get; set; }
 
+        [MaxLength(20)]
+        public string PermissionTitle { get; set; }
+
+        public List<RolePermissionConnection> RolePermissionConnections { get; set; }
     }
 }

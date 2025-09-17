@@ -32,6 +32,7 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         public List<ItemModelInventoryConnection>? ItemModelInventoryConnections { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
         public List<SubOnlineOrder>? SubOnlineOrders { get; set; }
+       
         #endregion
 
 

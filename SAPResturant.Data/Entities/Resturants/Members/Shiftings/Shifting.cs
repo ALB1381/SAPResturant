@@ -17,6 +17,9 @@ namespace SAPResturant.Data.Entities.Resturants.Members.Shiftings
         public DateTime ShiftStart { get; set; }
         public DateTime ShiftEnd { get; set; }
 
+        [MaxLength(300)]
+        public string? Review { get; set; }
+
         [ForeignKey("MemberId")]
         public Memeber Memeber { get; set; }
         [ForeignKey("BranchId")]

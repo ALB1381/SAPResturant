@@ -10,7 +10,5 @@ namespace SAPResturant.Data.Entities.Resturants.Members
 
         [MaxLength(100)]
         public string RoleName { get; set; }
-
-        public List<Memeber> Memebers { get; set; }
     }
 }

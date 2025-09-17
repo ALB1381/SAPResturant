@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,7 +30,7 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [ForeignKey("TableId")]
         public Table? Table { get; set; }
 
-        public int? MembeId { get; set; }
+        public long? MembeId { get; set; }
 
         [ForeignKey("MembeId")]
         public Members.Memeber? Memeber { get; set; }
