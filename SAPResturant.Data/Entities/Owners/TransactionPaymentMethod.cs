@@ -14,5 +14,10 @@ namespace SAPResturant.Data.Entities.Owners
         public string? Description { get; set; }
 
         public List<SubTransaction> SubTransactions { get; set; }
+        public List<OwnerTransaction> OwnerTransactions { get; set; }
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

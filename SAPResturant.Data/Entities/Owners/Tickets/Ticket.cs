@@ -5,35 +5,41 @@ namespace SAPResturant.Data.Entities.Owners.Tickets
 {
     public class Ticket
     {
+        #region Columns
         [Key]
         public int TicketID { get; set; }
-
         [MaxLength(100)]
         public string TicketHeader { get; set; }
-
         [MaxLength(1000)]
         public string TicketText { get; set; }
-
-        public int TicketModelId { get; set; }
-
-        public int TicketCategoryId { get; set; }
-
         public DateTime TicketTime { get; set; }
-
         public bool WasItResponse { get; set; }
-
         public bool IsActive { get; set; }
+        #endregion
 
-        public int? ParentId { get; set; } // Nullable to allow root tickets
 
+
+
+        #region Rel
+        public int? ParentId { get; set; }
         [ForeignKey("ParentId")]
         public List<Ticket>? Tickets { get; set; }
 
-        // Navigation properties
+        public int TicketModelId { get; set; }
         [ForeignKey("TicketModelId")]
         public TicketModel TicketModel { get; set; }
 
+        public int TicketCategoryId { get; set; }
         [ForeignKey("TicketCategoryId")]
         public TicketCategory TicketCategories { get; set; }
+        public int OwnerId { get; set; }
+        [ForeignKey("OwnerId")]
+        public Owner Owner { get; set; }
+        #endregion
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

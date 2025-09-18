@@ -11,5 +11,9 @@ namespace SAPResturant.Data.Entities.Owners.Tickets
         public string TicketModelText { get; set; }
 
         public List<Ticket>? Tickets { get; set; }
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

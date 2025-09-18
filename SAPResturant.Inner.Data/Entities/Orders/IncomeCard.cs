@@ -12,7 +12,7 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         [Key]
         public int IncomeCardId { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string CardNumber { get; set; }
 
         [MaxLength(40)]

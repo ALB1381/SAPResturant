@@ -24,23 +24,22 @@ namespace SAPResturant.Data.Entities.Owners
         public string? ProofOfPaymentIfItNeeds { get; set; }
         #endregion
 
-        #region Re
+
+
+        #region Rel
         public int OwnerId { get; set; }
-        public int? PayMethodId { get; set; }
-
-
         [ForeignKey("OwnerId")]
         public Owner Owner { get; set; }
-
-        public List<SubTransaction> SubTransactions { get; set; }
-
+        public int? PayMethodId { get; set; }
         [ForeignKey("PayMethodId")]
         public TransactionPaymentMethod? TransactionPaymentMethod { get; set; }
-        
-
+        public List<SubTransaction> SubTransactions { get; set; }
         #endregion
-      
 
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

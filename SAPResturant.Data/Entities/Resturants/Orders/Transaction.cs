@@ -17,10 +17,10 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         public DateTime TransactionCreateDate { get; set; }
         public DateTime? TransactionPayedTime { get; set; }
 
-        public int OrderId { get; set; }
+        public long? OrderId { get; set; }
 
         [ForeignKey("OrderId")]
-        public InnerOrder InnerOrder { get; set; }
+        public InnerOrder? InnerOrder { get; set; }
 
         public int PaymentMethodId { get; set; }
 

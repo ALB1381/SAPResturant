@@ -45,7 +45,8 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         #endregion
 
 
-
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

@@ -60,21 +60,7 @@ namespace SAPResturant.Inner.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                var clrType = entityType.ClrType;
-
-                foreach (var property in entityType.GetProperties())
-                {
-                    // Example: Apply to all int primary keys
-                    if (property.IsPrimaryKey() && property.ClrType == typeof(int))
-                    {
-                        modelBuilder.Entity(clrType)
-                            .Property(property.Name)
-                            .ValueGeneratedNever(); // Equivalent to DatabaseGeneratedOption.None
-                    }
-                }
-            }
+          
         }
     }
 }

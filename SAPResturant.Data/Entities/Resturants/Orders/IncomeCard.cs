@@ -13,17 +13,23 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [Key]
         public int IncomeCardId { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string CardNumber { get; set; }
 
         [MaxLength(40)]
-        public string CardName { get; set; }
+        public string CardInfo { get; set; }
+
+
 
         public List<Transaction> Transactions { get; set; }
-
         public int BranchId { get; set; }
-
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

@@ -42,17 +42,17 @@ namespace SAPResturant.Data.Entities.Resturants
 
         public List<Memeber>? Memebers { get; set; }
         public List<Shifting>? Shiftings { get; set; }
-        public List<Table> Tables { get; set; }
-        public List<Customer> Customers { get; set; }
-        public List<InnerOrder> InnerOrders { get; set; }
-        public List<OnlineOrder> OnlineOrders { get; set; }
-        public List<ItemExteraConnection> itemExteraConnections { get; set; }
-        public List<ItemGroup> ItemGroups { get; set; }
-        public List<ItemDiscount> ItemDiscounts { get; set; }
-        public List<TableReservation> TableReservations { get; set; }
+        public List<Table>? Tables { get; set; }
+        public List<Customer>? Customers { get; set; }
+        public List<InnerOrder>? InnerOrders { get; set; }
+        public List<OnlineOrder>? OnlineOrders { get; set; }
+        public List<ItemExteraConnection>? itemExteraConnections { get; set; }
+        public List<ItemGroup>? ItemGroups { get; set; }
+        public List<ItemDiscount>? ItemDiscounts { get; set; }
+        public List<TableReservation>? TableReservations { get; set; }
         public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
         public List<ResturanSection>? ResturanSections { get; set; }
-        public List<IncomeCard> IncomeCards { get; set; }
+        public List<IncomeCard>? IncomeCards { get; set; }
         public List<Pose>? Poses { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
         public List<SubOnlineOrder>? SubOnlineOrders { get; set; }
@@ -60,6 +60,11 @@ namespace SAPResturant.Data.Entities.Resturants
         public List<ItemModelInventoryConnection>? ItemModelInventoryConnections { get; set; }
         public List<Exited>? Exiteds { get; set; }
         public List<Inventory>? Inventories { get; set; }
+        public List<ExteraItem>? ExteraItems { get; set; }
+        public List<Item>? Items { get; set; }
+        public List<Menu>? Menus { get; set; }
+        public List<ItemModel>? ItemModels { get; set; }
+       
         #endregion
 
     }

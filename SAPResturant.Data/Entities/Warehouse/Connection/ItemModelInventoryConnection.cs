@@ -15,8 +15,8 @@ namespace SAPResturant.Data.Entities.Warehouse.Connection
         [Key]
         public int ConnectionId { get; set; }
 
-        public int InventoryId { get; set; }
-        public int ItemCaseId { get; set; }
+        public long InventoryId { get; set; }
+        public long ItemCaseId { get; set; }
 
         [ForeignKey("InventoryId")]
         public Inventory Inventory { get; set; }

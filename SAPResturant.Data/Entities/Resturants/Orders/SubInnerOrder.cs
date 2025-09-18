@@ -23,15 +23,15 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
 
         public DateTime DeliveredTime { get; set; }
 
-        public int? ItemModelId { get; set; }
+        public long? ItemModelId { get; set; }
         [ForeignKey("ItemModelId")]
         public ItemModel? ItemModel { get; set; }
 
-        public int? ExtraOnItemId { get; set; }
+        public long? ExtraOnItemId { get; set; }
         [ForeignKey("ExtraOnItemId")]
         public ExteraItem? ExteraItem { get; set; }
 
-        public int InnerOrderId { get; set; }
+        public long InnerOrderId { get; set; }
         [ForeignKey("InnerOrderId")]
         public InnerOrder InnerOrder { get; set; }
 

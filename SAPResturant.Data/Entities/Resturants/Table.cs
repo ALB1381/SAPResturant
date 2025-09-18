@@ -35,6 +35,9 @@ namespace SAPResturant.Data.Entities.Resturants
         public int? TableStatusId { get; set; }
         [ForeignKey("TableStatusId")]
         public TableStatus? TableStatus { get; set; }
+        public int? InnerOrderId { get; set; }
+        [ForeignKey("InnerOrderId")]
+        public InnerOrder? InnerOrder { get; set; }
         public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
         #endregion
 

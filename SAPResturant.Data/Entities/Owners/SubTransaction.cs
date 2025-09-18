@@ -19,9 +19,9 @@ namespace SAPResturant.Data.Entities.Owners
         public DateOnly SubTransactionDate { get; set; }
         public bool IsPayed { get; set; }
 
-        public DateTime? SubTransactionPayed { get; set; }
+        public DateTime? SubTransactionPayedTime { get; set; }
 
-        public DateTime? SubTransactionPlanedToPay { get; set; }
+        public DateTime? SubTransactionPlanedToPayTime { get; set; }
 
         [MaxLength(60)]
         public string? ProofOfPaymentIfItNeeds { get; set; }
@@ -29,6 +29,8 @@ namespace SAPResturant.Data.Entities.Owners
         [MaxLength(100)]
         public string? Description { get; set; }
         #endregion
+
+
 
         #region Rel
         public int? PayedMethodBuyId { get; set; }
@@ -42,7 +44,8 @@ namespace SAPResturant.Data.Entities.Owners
 
 
 
-
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

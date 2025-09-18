@@ -26,12 +26,12 @@ namespace SAPResturant.Inner.Data.Entities.Users
         [MaxLength(50)]
         public string UserFullName { get; set; }
 
-        [MaxLength(11)]
+        [MaxLength(20)]
         public string? CardId { get; set; }
 
-        public DateOnly BearthDate { get; set; }
-
+        public DateOnly? BearthDate { get; set; }
         public DateTime RegisterDate { get; set; }
+        public DateOnly? EndOfWorking { get; set; }
 
         [MaxLength(300)]
         public string? Address { get; set; }

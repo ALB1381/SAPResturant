@@ -8,23 +8,21 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
     public class ItemExteraConnection
     {
         [Key]
-        public int IECId { get; set; }
+        public long IECId { get; set; }
 
-        public int ItemId { get; set; }
-
-        public int ExteraItemId { get; set; }
-
+        public long ItemId { get; set; }
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
-
+        public long ExteraItemId { get; set; }
         [ForeignKey("ExteraItemId")]
         public ExteraItem ExteraItem { get; set; }
-
         public int BranchId { get; set; }
-
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
 
 
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }
