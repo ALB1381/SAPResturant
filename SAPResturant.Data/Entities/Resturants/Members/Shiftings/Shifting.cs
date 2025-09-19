@@ -20,9 +20,9 @@ namespace SAPResturant.Data.Entities.Resturants.Members.Shiftings
 
 
 
-        public long MemberId { get; set; }
+        public long? MemberId { get; set; }
         [ForeignKey("MemberId")]
-        public Memeber Memeber { get; set; }
+        public Memeber? Memeber { get; set; }
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }

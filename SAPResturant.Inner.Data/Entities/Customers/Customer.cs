@@ -29,16 +29,17 @@ namespace SAPResturant.Inner.Data.Entities.Customers
         public string? Address { get; set; }
 
         public DateTime FirstShop { get; set; }
-        public bool IsPhoneNumberValidated { get; set; }
-
-        [Column(TypeName = "nvarchar(8)")]
-        public string? PhoneNumberActiveCode { get; set; }
-
-        public DateTime? SentCode { get; set; }
-
-
         [MaxLength(100)]
         public string? Email { get; set; }
+
+        [MaxLength(24)]
+        public string? EmailActiveCode { get; set; }
+        public DateTime? EmailActiveSentCodeDate { get; set; }
+        public bool IsEmailActivated { get; set; }
+        public bool IsPhoneNumberValidated { get; set; }
+        [MaxLength(8)]
+        public string? PhoneNumberActiveCode { get; set; }
+        public DateTime? PhoneNumberActiveSentCodeDate { get; set; }
         public bool IsMan { get; set; }
         public List<InnerOrder>? InnerOrders { get; set; }
         public List<OuterOrder>? OuterOrders { get; set; }

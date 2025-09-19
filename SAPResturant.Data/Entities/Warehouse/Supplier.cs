@@ -7,7 +7,7 @@ namespace SAPResturant.Data.Entities.Warehouse
     public class Supplier
     {
         [Key]
-        public int SupplierId { get; set; }
+        public long SupplierId { get; set; }
 
         [MaxLength(50)]
         public string SupplierName { get; set; }
@@ -26,5 +26,11 @@ namespace SAPResturant.Data.Entities.Warehouse
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+        
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }

@@ -29,18 +29,18 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
 
 
         #region Rel
-        public long ItemGroupId { get; set; }
+        public long? ItemGroupId { get; set; }
         [ForeignKey("ItemGroupId")]
-        public ItemGroup ItemGroup { get; set; }
+        public ItemGroup? ItemGroup { get; set; }
 
         public long? ItemSubGroupId { get; set; }
         [ForeignKey("ItemSubGroupId")]
         public ItemGroup? ItemSubGroup { get; set; }
 
 
-        public int MenuId { get; set; }
+        public int? MenuId { get; set; }
         [ForeignKey("MenuId")]
-        public Menu Menu { get; set; }
+        public Menu? Menu { get; set; }
 
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]

@@ -6,7 +6,6 @@ namespace SAPResturant.Data.Entities.Resturants
     public class BranchType
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BranchTypeId { get; set; }
 
 
@@ -14,5 +13,11 @@ namespace SAPResturant.Data.Entities.Resturants
         public string Type { get; set; }
 
         public List<Branch> Branches { get; set; }
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

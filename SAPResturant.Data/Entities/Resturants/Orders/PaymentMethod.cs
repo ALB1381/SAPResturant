@@ -17,5 +17,11 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
 
         public bool Free { get; set; }
         public List<Transaction>? Transactions { get; set; }
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

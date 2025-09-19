@@ -11,7 +11,6 @@ namespace SAPResturant.Data.Entities
     public class Administrator
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AdminstratorId { get; set; }
 
         [Required]

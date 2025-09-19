@@ -30,9 +30,9 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
 
-        public int MenuId { get; set; }
+        public int? MenuId { get; set; }
         [ForeignKey("MenuId")]
-        public Menu Menu { get; set; }
+        public Menu? Menu { get; set; }
 
         [ForeignKey("ParentId")]
         public List<ItemGroup>? ItemParenttGroups { get; set; }

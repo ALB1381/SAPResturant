@@ -6,7 +6,7 @@ namespace SAPResturant.Data.Entities.Resturants
 {
     public class Resturant
     {
-        // An Owner can have multiple Restaurants and a restaurant can have multiple Sections
+
 
         [Key]
         public int ResturantId { get; set; }
@@ -22,15 +22,21 @@ namespace SAPResturant.Data.Entities.Resturants
 
         public int OwnerId { get; set; }
 
-
         #region Rel
 
         [ForeignKey("OwnerId")]
         public Owner Owner { get; set; }
 
         public List<Branch>? Branches { get; set; }
-  
+
         #endregion
+
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

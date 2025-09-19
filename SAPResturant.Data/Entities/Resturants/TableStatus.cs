@@ -10,7 +10,12 @@ namespace SAPResturant.Data.Entities.Resturants
         [MaxLength(60)]
         public string TableStatusName { get; set; }
 
-        public List<Table> Tables { get; set; }
+        public List<Table>? Tables { get; set; }
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
 
     }
 }

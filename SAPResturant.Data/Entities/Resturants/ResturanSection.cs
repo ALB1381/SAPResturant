@@ -11,7 +11,7 @@ namespace SAPResturant.Data.Entities.Resturants
     public class ResturanSection
     {
         [Key]
-        public int SectionId { get; set; }
+        public long SectionId { get; set; }
 
         public int SectionNumber { get; set; }
 
@@ -23,5 +23,11 @@ namespace SAPResturant.Data.Entities.Resturants
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

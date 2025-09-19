@@ -28,11 +28,11 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [ForeignKey("OrderStatusId")]
         public OrderStatus? OrderStatus { get; set; }
 
-        public int? CustomerId { get; set; }
+        public long? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public Customer? Customer { get; set; }
 
-        public int? TableId { get; set; }
+        public long? TableId { get; set; }
         [ForeignKey("TableId")]
         public Table? Table { get; set; }
 

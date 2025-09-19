@@ -29,9 +29,9 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-        public int MenuId { get; set; }
+        public int? MenuId { get; set; }
         [ForeignKey("MenuId")]
-        public Menu Menu { get; set; }
+        public Menu? Menu { get; set; }
         public List<ItemExteraConnection>? ItemExteraConnections { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
         public List<SubOnlineOrder>? SubOnlineOrders { get; set; }

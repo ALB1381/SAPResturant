@@ -14,6 +14,7 @@ namespace SAPResturant.Data.Entities.Resturants
         #region Columns
         [Key]
         public int BranchId { get; set; }
+
         [MaxLength(400)]
         public string? BranchAddress { get; set; }
         public Boolean IsBranchEnabledApplication { get; set; }
@@ -22,11 +23,13 @@ namespace SAPResturant.Data.Entities.Resturants
         public string BranchName { get; set; }
         #endregion
 
+
+
         #region Rel
         public int CityId { get; set; }
         public int BranchTypeId { get; set; }
         public int ResturantId { get; set; }
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
 
         [ForeignKey("BranchTypeId")]
         public BranchType BranchType { get; set; }
@@ -38,7 +41,7 @@ namespace SAPResturant.Data.Entities.Resturants
         public City City { get; set; }
 
         [ForeignKey("CountryId")]
-        public Country Country { get; set; }
+        public Country? Country { get; set; }
 
         public List<Memeber>? Memebers { get; set; }
         public List<Shifting>? Shiftings { get; set; }
@@ -64,8 +67,14 @@ namespace SAPResturant.Data.Entities.Resturants
         public List<Item>? Items { get; set; }
         public List<Menu>? Menus { get; set; }
         public List<ItemModel>? ItemModels { get; set; }
-       
+        public List<Transaction>? Transactions { get; set; }
+        public List<Supplied>? Supplieds { get; set; }
+        public List<Supplier>? Suppliers { get; set; }
         #endregion
 
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

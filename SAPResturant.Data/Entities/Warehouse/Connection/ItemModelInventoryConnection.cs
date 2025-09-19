@@ -13,7 +13,7 @@ namespace SAPResturant.Data.Entities.Warehouse.Connection
     public class ItemModelInventoryConnection
     {
         [Key]
-        public int ConnectionId { get; set; }
+        public long ConnectionId { get; set; }
 
         public long InventoryId { get; set; }
         public long ItemCaseId { get; set; }
@@ -27,5 +27,11 @@ namespace SAPResturant.Data.Entities.Warehouse.Connection
         public int BranchId  { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }

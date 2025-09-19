@@ -13,9 +13,9 @@ namespace SAPResturant.Data.Entities.Resturants
         [Key]
         public int ConnectionId { get; set; }
 
-        public int TableReservationId { get; set; }
+        public long TableReservationId { get; set; }
 
-        public int TableId { get; set; }
+        public long TableId { get; set; }
 
         [ForeignKey("TableReservationId")]
         public TableReservation TableReservation { get; set; }
@@ -26,6 +26,13 @@ namespace SAPResturant.Data.Entities.Resturants
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

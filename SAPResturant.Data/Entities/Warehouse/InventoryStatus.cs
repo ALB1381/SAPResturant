@@ -14,5 +14,10 @@ namespace SAPResturant.Data.Entities.Warehouse
         public string? StatusColor { get; set; }
 
         public List<Inventory>? Inventories { get; set; }
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }

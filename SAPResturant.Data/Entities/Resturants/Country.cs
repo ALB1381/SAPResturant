@@ -9,8 +9,14 @@ namespace SAPResturant.Data.Entities.Resturants
 
         [MaxLength(100)]
         public string CountryName { get; set; }
-        public List<City> Cities { get; set; }
-        public List<Branch> Branches { get; set; }
+        public List<City>? Cities { get; set; }
+        public List<Branch>? Branches { get; set; }
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

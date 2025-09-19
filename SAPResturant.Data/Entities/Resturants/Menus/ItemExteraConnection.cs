@@ -10,12 +10,12 @@ namespace SAPResturant.Data.Entities.Resturants.Menus
         [Key]
         public long IECId { get; set; }
 
-        public long ItemId { get; set; }
+        public long? ItemId { get; set; }
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
-        public long ExteraItemId { get; set; }
+        public Item? Item { get; set; }
+        public long? ExteraItemId { get; set; }
         [ForeignKey("ExteraItemId")]
-        public ExteraItem ExteraItem { get; set; }
+        public ExteraItem? ExteraItem { get; set; }
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }

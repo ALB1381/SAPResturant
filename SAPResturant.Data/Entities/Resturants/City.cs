@@ -19,5 +19,11 @@ namespace SAPResturant.Data.Entities.Resturants
         public Country Country { get; set; }
         public List<Branch> Branches { get; set; }
 
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }

@@ -15,5 +15,12 @@ namespace SAPResturant.Data.Entities.Resturants
         public string SexName { get; set; }
 
         public List<Customer>? Customers { get; set; }
+
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

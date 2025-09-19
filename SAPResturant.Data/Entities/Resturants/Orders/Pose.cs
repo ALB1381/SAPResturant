@@ -21,5 +21,10 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
     }
 }

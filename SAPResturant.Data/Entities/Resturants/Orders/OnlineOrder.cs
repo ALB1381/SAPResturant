@@ -30,7 +30,7 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         public int OrderStatusId { get; set; }
         [ForeignKey("OrderStatusId")]
         public OrderStatus OrderStatus { get; set; }
-        public int CustomerId { get; set; }
+        public long CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
         public List<SubOnlineOrder>? SubOnlineOrders { get; set; }

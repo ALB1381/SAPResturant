@@ -13,7 +13,7 @@ namespace SAPResturant.Data.Entities.Resturants
     {
         #region Columns
         [Key]
-        public int TableId { get; set; }
+        public long TableId { get; set; }
         [MaxLength(50)]
         public string? TableDescription { get; set; }
         public int TableNumber { get; set; }
@@ -25,21 +25,33 @@ namespace SAPResturant.Data.Entities.Resturants
         #endregion
 
 
+
+
+
         #region Rel
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-        public int? ResturantSectionId { get; set; }
+        public long? ResturantSectionId { get; set; }
         [ForeignKey("ResturantSectionId")]
         public ResturanSection? ResturanSection { get; set; }
         public int? TableStatusId { get; set; }
         [ForeignKey("TableStatusId")]
         public TableStatus? TableStatus { get; set; }
-        public int? InnerOrderId { get; set; }
+        public long? InnerOrderId { get; set; }
         [ForeignKey("InnerOrderId")]
         public InnerOrder? InnerOrder { get; set; }
         public List<TableReservationTableConnection>? TableReservationTableConnections { get; set; }
         #endregion
+
+
+
+
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
 
     }
 }

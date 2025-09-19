@@ -32,7 +32,7 @@ namespace SAPResturant.Data.Entities.Warehouse
         [ForeignKey("InventoryGroupId")]
         public InventoryGroup? InventoryGroup { get; set; }
 
-        public int? SupplierId { get; set; }
+        public long? SupplierId { get; set; }
         [ForeignKey("SupplierId")]
         public Supplier? Supplier { get; set; }
         public int? InventoryStatusId { get; set; }
@@ -45,5 +45,11 @@ namespace SAPResturant.Data.Entities.Warehouse
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }

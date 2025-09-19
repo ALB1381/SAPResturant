@@ -20,11 +20,16 @@ namespace SAPResturant.Data.Entities.Warehouse
 
         [MaxLength(100)]
         public string? Description { get; set; }
-        public int InventoryId { get; set; }
+        public long? InventoryId { get; set; }
         [ForeignKey("InventoryId")]
-        public Inventory Inventory { get; set; }
+        public Inventory? Inventory { get; set; }
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
+
+
+        [MaxLength(30)]
+        public string OnMadeLog { get; set; }
+
     }
 }
