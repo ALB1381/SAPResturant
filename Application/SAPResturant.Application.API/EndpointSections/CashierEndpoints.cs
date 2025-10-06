@@ -11,6 +11,10 @@ namespace SAPResturant.Application.API.EndpointSections
                 var data = await service.GetCashierDashboardInformationDTO();
                 return Results.Ok(data);
             });
+            EndpointGroup.MapGet("/GetCreateNewOrderFromCashierDTOs", async (IAPIService service) => {
+            var data = await service.GetCreateNewOrderFromCashierPageDTO();
+                return Results.Ok(data);
+            });
         }
     }
 }

@@ -17,7 +17,7 @@ namespace SAPResturant.Application.API.Service.Service
         SAPInnerResturantContext _context;
         public APIService(SAPInnerResturantContext sAPInnerResturant)
         {
-                _context = sAPInnerResturant;
+            _context = sAPInnerResturant;
         }
 
         public async Task<CashierDashboardDTO> GetCashierDashboardInformationDTO()
@@ -67,6 +67,97 @@ namespace SAPResturant.Application.API.Service.Service
             }
 
             return dashboardDto;
+        }
+       
+
+
+
+        public async Task<CreatNewOrderDTO> GetCreateNewOrderFromCashierPageDTO()
+        {
+            var sql = @"
+            -- Result Set 1: All menu items with their group info
+            SELECT
+                i.ItemId, i.ItemName, i.ItemImage,
+                ig.ItemGroupId AS GroupId, ig.GroupName, ig.GroupCardColors AS GroupColor
+            FROM dbo.Items AS i
+            JOIN dbo.ItemGroups AS ig ON i.ItemGroupId = ig.ItemGroupId
+            ORDER BY ig.ItemGroupId, i.ItemName;
+
+            -- Result Set 2: All item options (from ItemCases)
+            SELECT ic.ItemId, ic.ItemCaseId AS OptionId, ic.CaseTitle AS OptionTitle, ic.CasePrice AS OptionPrice
+            FROM dbo.ItemCases AS ic;
+
+            -- Result Set 3: All extra add-ons for items
+            SELECT eic.ItemId, ei.ExtraOnItemId, ei.ExtraOnItemTitle AS ExtraOnItemName, ei.ExtraOnItemPrice
+            FROM dbo.ExtraOnItems AS ei
+            JOIN dbo.ExtraOnItemItemConnections AS eic ON ei.ExtraOnItemId = eic.ExtraOnItemId;
+
+            -- Result Set 4: A flat list of all item groups
+            SELECT ig.ItemGroupId AS GroupId, ig.GroupName, ig.GroupCardColors AS GroupColor
+            FROM dbo.ItemGroups AS ig ORDER BY ig.GroupName;
+
+            -- Result Set 5: All tables with their current status
+            SELECT t.TableId, t.TableName, t.CountOfSeats AS CountOdSeats, ts.TableStatusName AS Status
+            FROM dbo.Tables AS t
+            LEFT JOIN dbo.TableStatuses AS ts ON t.TableStatusId = ts.TableStatusId
+            ORDER BY t.TableNumber;
+        ";
+
+            var connection = _context.Database.GetDbConnection();
+            using (var multi = await connection.QueryMultipleAsync(sql))
+            {
+                // ========================= FIX IS HERE =========================
+                // 1. Read the raw, flat data from the first result set.
+                var flatItems = (await multi.ReadAsync<dynamic>()).ToList();
+
+                // 2. Use LINQ to project the flat data into your nested DTO structure.
+                var items = flatItems.Select(i => new ShortItemInformation
+                {
+                    ItemId = i.ItemId,
+                    ItemName = i.ItemName,
+                    ItemImage = i.ItemImage,
+                    ShortGroupInformation = new ShortGroupInformation
+                    {
+                        GroupId = i.GroupId,
+                        GroupName = i.GroupName,
+                        GroupColor = i.GroupColor
+                    }
+                }).ToList();
+                // ===============================================================
+
+                // The rest of the logic remains the same
+                var allOptions = (await multi.ReadAsync<dynamic>()).ToList();
+                var allExtras = (await multi.ReadAsync<dynamic>()).ToList();
+                var allGroups = (await multi.ReadAsync<ShortGroupInformation>()).ToList();
+                var allTables = (await multi.ReadAsync<TableLittleInfo>()).ToList();
+
+                var optionsLookup = allOptions.GroupBy(o => (int)o.ItemId)
+                                              .ToDictionary(g => g.Key, g => g.Select(o => new ShortItemOption { OptionId = o.OptionId, OptionTitle = o.OptionTitle, OptionPrice = o.OptionPrice }).ToList());
+
+                var extrasLookup = allExtras.GroupBy(e => (int)e.ItemId)
+                                            .ToDictionary(g => g.Key, g => g.Select(e => new ShortExtraOnItem { ExtraOnItemId = e.ExtraOnItemId, ExtraOnItemName = e.ExtraOnItemName, ExtraOnItemPrice = e.ExtraOnItemPrice }).ToList());
+
+                foreach (var item in items)
+                {
+                    if (optionsLookup.TryGetValue(item.ItemId, out var options))
+                    {
+                        item.ItemOptions = options;
+                        item.Price = options.FirstOrDefault()?.OptionPrice;
+                    }
+
+                    if (extrasLookup.TryGetValue(item.ItemId, out var extras))
+                    {
+                        item.ShortExtraOnItems = extras;
+                    }
+                }
+
+                return new CreatNewOrderDTO
+                {
+                    ShortItemInformation = items,
+                    ShortGroupInformation = allGroups,
+                    TableLittleInfos = allTables
+                };
+            }
         }
     }
 }
