@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SAPResturant.Data.Context;
-using SAPResturant.Inner.Data.Context;
+//using SAPResturant.Inner.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

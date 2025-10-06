@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.AccessControl;
 
 namespace SAPResturant.Data.Entities.Resturants.Menus
 {

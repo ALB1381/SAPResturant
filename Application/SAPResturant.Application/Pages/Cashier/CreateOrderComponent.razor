@@ -1,0 +1,277 @@
+﻿@page "/orders/CreateNew"
+
+<AddressingComponent ThisPageUrl="/orders/CreateNew" LastPageUrl="@lastpage" TitleName="Add New Order"></AddressingComponent>
+<div class="flex-1 flex overflow-hidden px-8 pb-8 space-x-8 h-[calc(100vh-80px)] container">
+
+    <!-- Left Column: Menu Items & Categories -->
+    <div class="flex-[2] flex flex-col space-y-4">
+        <div class="flex items-center space-x-4 flex-shrink-0">
+            <input @bind="searchTerm" @bind:event="oninput" type="text" placeholder="Search for food, drinks, etc." class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card">
+        </div>
+        <div class="flex items-center space-x-2 text-sm overflow-x-auto pb-2 flex-shrink-0">
+            <button @onclick="() => FilterItems(null)" class="@(selectedGroupId == null ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors">All</button>
+            @foreach (var group in itemGroups)
+            {
+                <button @onclick="() => FilterItems(group.ItemGroupId)" class="@(selectedGroupId == group.ItemGroupId ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors">@group.GroupName</button>
+            }
+        </div>
+
+        <!-- Menu Item Grid -->
+        <div class="overflow-y-auto pr-2">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach (var item in GetFilteredItems())
+                {
+                    <div @onclick="() => AddItemToOrder(item)" class="glass-card rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:scale-105 hover:shadow-lg transition-transform">
+                        <img src="@item.ImageUrl" alt="@item.CaseTitle" class="w-20 h-20 object-cover rounded-full mb-3">
+                        <p class="font-bold text-sm">@item.CaseTitle</p>
+                        <p class="text-xs text-gray-600">$@item.CasePrice.ToString("F2")</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Order Summary & Actions -->
+    <aside class="flex-1 flex flex-col glass-card p-6 rounded-3xl">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">New Order</h2>
+            <div class="flex items-center">
+                <span class="font-semibold mr-2">Table:</span>
+                <select @bind="currentOrder.TableId" class="p-2 rounded-xl border-none bg-white/50 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <option value="0">Select Table</option>
+                    @foreach (var table in tables)
+                    {
+                        <option value="@table.TableId">@table.TableName (@table.CountOfSeats seats)</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Order Items List -->
+        <div class="flex-1 overflow-y-auto -mr-2 pr-2">
+            @if (!currentOrder.Items.Any())
+            {
+                <div class="h-full flex items-center justify-center text-gray-500">
+                    <p>Select items from the menu</p>
+                </div>
+            }
+            else
+            {
+                <div class="space-y-3">
+                    @foreach (var orderItem in currentOrder.Items)
+                    {
+                        <div class="flex items-center p-3 rounded-lg bg-white/50">
+                            <img src="@orderItem.ImageUrl" alt="@orderItem.ItemName" class="w-12 h-12 rounded-lg object-cover mr-4">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">@orderItem.ItemName</p>
+                                <p class="text-xs text-gray-600">$@orderItem.Price.ToString("F2")</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button @onclick="() => DecrementItem(orderItem.ItemCaseId)" class="w-6 h-6 rounded-md bg-gray-200 hover:bg-gray-300">-</button>
+                                <span>@orderItem.Quantity</span>
+                                <button @onclick="() => IncrementItem(orderItem.ItemCaseId)" class="w-6 h-6 rounded-md bg-gray-200 hover:bg-gray-300">+</button>
+                            </div>
+                            <p class="w-16 text-right font-semibold text-sm ml-4">$@((orderItem.Quantity * orderItem.Price).ToString("F2"))</p>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Order Summary & Actions -->
+        <div class="pt-4 border-t border-white/50">
+            <div class="space-y-2 text-sm mb-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span class="font-medium">$@currentOrder.RawPrice.ToString("F2")</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Tax (10%)</span>
+                    <span class="font-medium">$@currentOrder.TaxPrice.ToString("F2")</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>$@currentOrder.SumPrice.ToString("F2")</span>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">Save Order</button>
+                <button class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-colors">Finalize & Pay</button>
+            </div>
+        </div>
+    </aside>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? lastpage { get; set; }
+    // --- View Models ---
+    public class OrderViewModel
+    {
+        public int? TableId { get; set; }
+        public int? CustomerId { get; set; }
+        public int? UserId { get; set; }
+        public List<OrderItemViewModel> Items { get; set; } = new List<OrderItemViewModel>();
+        public decimal RawPrice => Items.Sum(i => i.Price * i.Quantity);
+        public decimal TaxPrice => RawPrice * 0.10m; // Example 10% tax
+        public decimal SumPrice => RawPrice + TaxPrice;
+    }
+
+    public class OrderItemViewModel
+    {
+        public int ItemCaseId { get; set; }
+        public string ItemName { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+        public string ImageUrl { get; set; }
+    }
+
+    // --- Mock Data (replace with your actual data service) ---
+    private List<ItemGroup> itemGroups = new();
+    private List<ItemCase> menuItems = new();
+    private List<Table> tables = new();
+    private OrderViewModel currentOrder = new();
+
+    private int? selectedGroupId = null;
+    private string searchTerm = "";
+
+    // Represents the ItemGroups table
+    public class ItemGroup
+    {
+        public int ItemGroupId { get; set; }
+        public string GroupName { get; set; }
+    }
+
+    // Represents the ItemCases table
+    public class ItemCase
+    {
+        public int ItemCaseId { get; set; }
+        public string CaseTitle { get; set; }
+        public decimal CasePrice { get; set; }
+        public int ItemId { get; set; }
+        public string ImageUrl { get; set; } // Custom property for UI
+        public int? ItemGroupId { get; set; }
+    }
+
+    // Represents the Tables table
+    public class Table
+    {
+        public int TableId { get; set; }
+        public string TableName { get; set; }
+        public int CountOfSeats { get; set; }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // In a real app, you would load this from your database asynchronously
+        LoadMockData();
+    }
+
+    private void LoadMockData()
+    {
+        itemGroups = new List<ItemGroup>
+        {
+            new ItemGroup { ItemGroupId = 1, GroupName = "Appetizers" },
+            new ItemGroup { ItemGroupId = 2, GroupName = "Main Courses" },
+            new ItemGroup { ItemGroupId = 3, GroupName = "Desserts" },
+            new ItemGroup { ItemGroupId = 4, GroupName = "Drinks" },
+        };
+
+        menuItems = new List<ItemCase>
+        {
+            // Appetizers
+            new ItemCase { ItemCaseId = 101, CaseTitle = "Spring Rolls", CasePrice = 8.50m, ItemGroupId = 1, ImageUrl = "https://placehold.co/100x100/f59e0b/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 102, CaseTitle = "Garlic Bread", CasePrice = 6.00m, ItemGroupId = 1, ImageUrl = "https://placehold.co/100x100/f59e0b/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 103, CaseTitle = "Bruschetta", CasePrice = 9.00m, ItemGroupId = 1, ImageUrl = "https://placehold.co/100x100/f59e0b/FFFFFF?text=Item" },
+
+            // Main Courses
+            new ItemCase { ItemCaseId = 201, CaseTitle = "Spaghetti Carbonara", CasePrice = 18.00m, ItemGroupId = 2, ImageUrl = "https://placehold.co/100x100/ef4444/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 202, CaseTitle = "Grilled Salmon", CasePrice = 24.50m, ItemGroupId = 2, ImageUrl = "https://placehold.co/100x100/ef4444/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 203, CaseTitle = "Ribeye Steak", CasePrice = 32.00m, ItemGroupId = 2, ImageUrl = "https://placehold.co/100x100/ef4444/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 204, CaseTitle = "Margherita Pizza", CasePrice = 15.00m, ItemGroupId = 2, ImageUrl = "https://placehold.co/100x100/ef4444/FFFFFF?text=Item" },
+
+            // Desserts
+            new ItemCase { ItemCaseId = 301, CaseTitle = "Tiramisu", CasePrice = 9.50m, ItemGroupId = 3, ImageUrl = "https://placehold.co/100x100/8b5cf6/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 302, CaseTitle = "Cheesecake", CasePrice = 8.00m, ItemGroupId = 3, ImageUrl = "https://placehold.co/100x100/8b5cf6/FFFFFF?text=Item" },
+
+            // Drinks
+            new ItemCase { ItemCaseId = 401, CaseTitle = "Cola", CasePrice = 3.50m, ItemGroupId = 4, ImageUrl = "https://placehold.co/100x100/3b82f6/FFFFFF?text=Item" },
+            new ItemCase { ItemCaseId = 402, CaseTitle = "Orange Juice", CasePrice = 4.00m, ItemGroupId = 4, ImageUrl = "https://placehold.co/100x100/3b82f6/FFFFFF?text=Item" }
+        };
+
+        tables = new List<Table>
+        {
+            new Table { TableId = 1, TableName = "Table 1", CountOfSeats = 4 },
+            new Table { TableId = 2, TableName = "Table 2", CountOfSeats = 2 },
+            new Table { TableId = 3, TableName = "Table 3", CountOfSeats = 6 },
+            new Table { TableId = 4, TableName = "Bar 1", CountOfSeats = 1 },
+            new Table { TableId = 5, TableName = "Patio 1", CountOfSeats = 4 },
+        };
+    }
+
+    private IEnumerable<ItemCase> GetFilteredItems()
+    {
+        var query = menuItems.AsEnumerable();
+        if (selectedGroupId != null)
+        {
+            query = query.Where(i => i.ItemGroupId == selectedGroupId);
+        }
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(i => i.CaseTitle.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+        return query;
+    }
+
+    private void FilterItems(int? groupId)
+    {
+        selectedGroupId = groupId;
+    }
+
+    private void AddItemToOrder(ItemCase item)
+    {
+        var existingItem = currentOrder.Items.FirstOrDefault(i => i.ItemCaseId == item.ItemCaseId);
+        if (existingItem != null)
+        {
+            existingItem.Quantity++;
+        }
+        else
+        {
+            currentOrder.Items.Add(new OrderItemViewModel
+            {
+                ItemCaseId = item.ItemCaseId,
+                ItemName = item.CaseTitle,
+                Price = item.CasePrice,
+                Quantity = 1,
+                ImageUrl = item.ImageUrl
+            });
+        }
+    }
+
+    private void IncrementItem(int itemCaseId)
+    {
+        var item = currentOrder.Items.FirstOrDefault(i => i.ItemCaseId == itemCaseId);
+        if (item != null)
+        {
+            item.Quantity++;
+        }
+    }
+
+    private void DecrementItem(int itemCaseId)
+    {
+        var item = currentOrder.Items.FirstOrDefault(i => i.ItemCaseId == itemCaseId);
+        if (item != null)
+        {
+            if (item.Quantity > 1)
+            {
+                item.Quantity--;
+            }
+            else
+            {
+                currentOrder.Items.Remove(item);
+            }
+        }
+    }
+}

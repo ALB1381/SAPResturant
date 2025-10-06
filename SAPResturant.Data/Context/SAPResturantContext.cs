@@ -9,12 +9,6 @@ using SAPResturant.Data.Entities.Resturants.Menus;
 using SAPResturant.Data.Entities.Resturants.Orders;
 using SAPResturant.Data.Entities.Warehouse;
 using SAPResturant.Data.Entities.Warehouse.Connection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SAPResturant.Data.Context
 {
@@ -116,7 +110,7 @@ namespace SAPResturant.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+
             //modelBuilder.Entity<BranchType>().HasData(new BranchType() { BranchTypeId = 1, Type = "Cafe" }, new BranchType() { BranchTypeId = 2, Type = "Resturant" }, new BranchType() { BranchTypeId = 3, Type = "Cafe & Resturant" });
         }
     }

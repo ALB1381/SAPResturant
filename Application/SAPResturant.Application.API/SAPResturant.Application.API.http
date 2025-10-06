@@ -1,0 +1,6 @@
+@SAPResturant.Application.API_HostAddress = http://localhost:5106
+
+GET {{SAPResturant.Application.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

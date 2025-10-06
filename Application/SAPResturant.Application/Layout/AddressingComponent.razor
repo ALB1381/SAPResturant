@@ -1,0 +1,26 @@
+﻿<div class="flex items-center space-x-4 mb-6 ms-5">
+    <a href="@LastPageUrl" class="glass-card p-2 rounded-xl hover:bg-white/80 transition-colors">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+    </a>
+    <a href="@ThisPageUrl">
+        <h1 class="text-3xl font-bold text-gray-900">@TitleName</h1>
+    </a>
+ 
+</div>
+
+@code {
+    [Parameter]
+    public string TitleName { get; set; }
+    [Parameter]
+    public string ThisPageUrl { get; set; }
+
+    [Parameter]
+    public string? LastPageUrl { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+
+
+}

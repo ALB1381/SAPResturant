@@ -1,15 +1,6 @@
 ﻿using SAPResturant.Data.Entities.Owners.Tickets;
 using SAPResturant.Data.Entities.Resturants;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
-using System.Transactions;
 
 namespace SAPResturant.Data.Entities.Owners
 {

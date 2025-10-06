@@ -26,7 +26,7 @@ namespace SAPResturant.Data.Entities.Warehouse
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
-        
+
 
 
         [MaxLength(30)]
