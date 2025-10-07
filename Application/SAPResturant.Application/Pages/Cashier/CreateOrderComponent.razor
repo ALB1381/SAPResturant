@@ -4,12 +4,13 @@
 @using SAPResturant.Application.DTOs
 @inject IHttpClientFactory HttpClientFactory
 
+
 <AddressingComponent ThisPageUrl="/orders/CreateNew" LastPageUrl="@lastpage" TitleName="Add New Order"></AddressingComponent>
 
 @if (createOrderData == null)
 {
     <div class="flex-1 flex items-center justify-center">
-        <p>Loading menu...</p>
+        <p class="text-lg text-gray-500">Loading menu, please wait...</p>
     </div>
 }
 else
@@ -25,7 +26,7 @@ else
                 <button @onclick="() => FilterItems(null)" class="@(selectedGroupId == null ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors">All</button>
                 @foreach (var group in createOrderData.ShortGroupInformation)
                 {
-                    <button @onclick="() => FilterItems(group.GroupId)" class="@(selectedGroupId == group.GroupId ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors" style="background-color:@(selectedGroupId == group.GroupId ? "" : group.GroupColor); color: @(selectedGroupId == group.GroupId ? "" : "white")">
+                    <button @onclick="() => FilterItems(group.GroupId)" class="@(selectedGroupId == group.GroupId ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors" style="@(selectedGroupId != group.GroupId ? $"background-color: {group.GroupColor}; color: white;" : "")">
                         @group.GroupName
                     </button>
                 }
@@ -103,7 +104,7 @@ else
                 </div>
                 <div class="flex space-x-2">
                     <button class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">Save Order</button>
-                    <button class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-colors">Finalize & Pay</button>
+                    <button @onclick="OpenFinalizeModal" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-colors" disabled="@(!currentOrder.Items.Any())">Finalize & Pay</button>
                 </div>
             </div>
         </aside>
@@ -117,7 +118,7 @@ else
     <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-40" @onclick="CloseCustomizationModal">
         <div class="glass-card rounded-3xl w-full max-w-md p-6" @onclick:stopPropagation="true">
             <h3 class="text-2xl font-bold mb-4">Customize @selectedItemForModal.ItemName</h3>
-
+            
             @if (selectedItemForModal.ItemOptions != null && selectedItemForModal.ItemOptions.Any())
             {
                 <div class="mb-4">
@@ -160,6 +161,65 @@ else
     </div>
 }
 
+<!-- Finalize and Pay Modal -->
+@if (showFinalizeModal)
+{
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50" @onclick="CloseFinalizeModal">
+        <div class="glass-card rounded-3xl w-full max-w-lg p-6" @onclick:stopPropagation="true">
+            <h3 class="text-2xl font-bold mb-4">Finalize & Pay</h3>
+            
+            <div class="mb-4">
+                <label for="kitchenNotes" class="font-semibold mb-2 block">Notes for Kitchen/Bar</label>
+                <textarea id="kitchenNotes" @bind="currentOrder.KitchenDescription" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" rows="3" placeholder="e.g., extra spicy, no onions..."></textarea>
+            </div>
+
+            <div class="mb-4 relative">
+                <label for="customerPhone" class="font-semibold mb-2 block">Customer Phone (Optional)</label>
+                <input id="customerPhone" type="tel" @bind="currentOrder.CustomerPhoneNumber" @bind:event="oninput" onchange="@HandlePhoneNumberInput" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter phone to find customer...">
+                
+                @if (customerSuggestions.Any())
+                {
+                    <div class="absolute w-full mt-1 bg-white rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
+                        @foreach (var cust in customerSuggestions)
+                        {
+                            <div @onclick="() => SelectCustomer(cust)" class="p-3 hover:bg-gray-100 cursor-pointer border-b">
+                                <p class="font-bold">@cust.CustomerName</p>
+                                <p class="text-sm text-gray-500">@cust.CustomerPhoneNumber</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (currentOrder.SelectedCustomer != null)
+            {
+                <div class="p-3 rounded-lg bg-green-100 text-green-800 mb-4">
+                    Selected Customer: <span class="font-bold">@currentOrder.SelectedCustomer.CustomerName</span>
+                </div>
+            }
+            @if (customerNotFound)
+            {
+                 <div class="p-3 rounded-lg bg-yellow-100 text-yellow-800 mb-4 flex justify-between items-center">
+                    <span>Customer not found.</span>
+                    <button class="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-bold">Add New Customer</button>
+                </div>
+            }
+
+            <div class="mb-6">
+                 <h4 class="font-semibold mb-2">Payment Method</h4>
+                 <div class="grid grid-cols-3 gap-2">
+                     <button class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Pay with Card</button>
+                     <button class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Pay with Cash</button>
+                    <button class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
+                 </div>
+            </div>
+
+            <button @onclick="CloseFinalizeModal" class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">Cancel</button>
+        </div>
+    </div>
+}
+
+
 @code {
     [SupplyParameterFromQuery]
     [Parameter]
@@ -167,33 +227,43 @@ else
 
     private CreatNewOrderDTO? createOrderData;
     private OrderViewModel currentOrder = new();
-
+    
     private int? selectedGroupId = null;
     private string searchTerm = "";
+    
+    // Modal States
     private bool showCustomizationModal = false;
+    private bool showFinalizeModal = false;
+
+    // Customization Modal State
     private ShortItemInformation? selectedItemForModal;
     private OrderItemViewModel tempOrderItem = new();
 
+    // Finalize Modal State & Customer Search
+    private List<LittleCustomerInformationDTO> customerSuggestions = new();
+    private bool customerNotFound = false;
+    private HttpClient client = new();
+
     protected override async Task OnInitializedAsync()
     {
-        var client = HttpClientFactory.CreateClient("Api");
+        client = HttpClientFactory.CreateClient("Api");
         try
         {
-            // IMPORTANT: Replace this with your actual API endpoint for the dashboard
             createOrderData = await client.GetFromJsonAsync<CreatNewOrderDTO>("api/Cashier/GetCreateNewOrderFromCashierDTOs");
         }
         catch (Exception ex)
         {
-            // Log error for debugging
-            Console.WriteLine($"Failed to fetch dashboard data: {ex.Message}");
+            Console.WriteLine($"Failed to fetch initial order data: {ex.Message}");
         }
-       
     }
-
+    
     // --- View Models For UI State ---
     public class OrderViewModel
     {
         public int? TableId { get; set; }
+        public string? KitchenDescription { get; set; }
+        public string? CustomerPhoneNumber { get; set; }
+        public LittleCustomerInformationDTO? SelectedCustomer { get; set; }
         public List<OrderItemViewModel> Items { get; set; } = new();
         public decimal RawPrice => Items.Sum(i => i.TotalItemPrice);
         public decimal TaxPrice => RawPrice * 0.10m; // Example 10% tax
@@ -207,8 +277,16 @@ else
         public ShortItemOption SelectedOption { get; set; }
         public List<ShortExtraOnItem> SelectedExtras { get; set; } = new();
         public int Quantity { get; set; }
-        public decimal TotalItemPrice => (SelectedOption.OptionPrice + (SelectedExtras.Sum(e => e.ExtraOnItemPrice) ?? 0)) * Quantity;
+        public decimal TotalItemPrice => ((decimal)(SelectedOption?.OptionPrice ?? BaseItem.Price ?? 0) + (decimal)(SelectedExtras.Sum(e => e.ExtraOnItemPrice) ?? 0)) * Quantity;
     }
+    
+    public class LittleCustomerInformationDTO 
+    {
+        public int CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerPhoneNumber { get; set; }
+    }
+
 
     private IEnumerable<ShortItemInformation> GetFilteredItems()
     {
@@ -227,17 +305,57 @@ else
     }
 
     private void FilterItems(int? groupId) => selectedGroupId = groupId;
-
+    
     private void OpenCustomizationModal(ShortItemInformation item)
     {
         selectedItemForModal = item;
         var defaultOption = item.ItemOptions?.FirstOrDefault();
-
+        
         tempOrderItem = new OrderItemViewModel { BaseItem = item, SelectedOption = defaultOption };
         showCustomizationModal = true;
     }
 
     private void CloseCustomizationModal() => showCustomizationModal = false;
+    private void OpenFinalizeModal() => showFinalizeModal = true;
+    private void CloseFinalizeModal() 
+    {
+        showFinalizeModal = false;
+        customerSuggestions.Clear();
+        customerNotFound = false;
+    }
+
+    private async Task HandlePhoneNumberInput(ChangeEventArgs e)
+    {
+        currentOrder.CustomerPhoneNumber = e.Value?.ToString();
+        customerNotFound = false;
+        customerSuggestions.Clear();
+        currentOrder.SelectedCustomer = null; 
+
+        if (!string.IsNullOrWhiteSpace(currentOrder.CustomerPhoneNumber) && currentOrder.CustomerPhoneNumber.Length > 2)
+        {
+            try
+            {
+                 customerSuggestions = await client.GetFromJsonAsync<List<LittleCustomerInformationDTO>>($"api/Customer/GetUserNamesByPhoneNumber/{currentOrder.CustomerPhoneNumber}");
+                 if(customerSuggestions == null || !customerSuggestions.Any())
+                 {
+                    customerNotFound = true;
+                 }
+            }
+            catch (Exception ex)
+            {
+                 Console.WriteLine($"Failed to fetch customers: {ex.Message}");
+                 customerNotFound = true;
+            }
+        }
+    }
+
+    private void SelectCustomer(LittleCustomerInformationDTO customer)
+    {
+        currentOrder.SelectedCustomer = customer;
+        currentOrder.CustomerPhoneNumber = customer.CustomerPhoneNumber;
+        customerSuggestions.Clear();
+        customerNotFound = false;
+    }
 
     private void ToggleExtra(ShortExtraOnItem extra, bool isChecked)
     {
@@ -255,25 +373,23 @@ else
     {
         if (tempOrderItem.SelectedOption == null)
         {
-            // If there's only one option, auto-select it. Otherwise, require selection.
-            if (selectedItemForModal?.ItemOptions?.Count == 1)
+            if(selectedItemForModal?.ItemOptions?.Count == 1)
             {
                 tempOrderItem.SelectedOption = selectedItemForModal.ItemOptions.First();
             }
-            else if (selectedItemForModal?.Price != null) // Fallback to base price if no options
+            else if (selectedItemForModal?.Price != null)
             {
-                tempOrderItem.SelectedOption = new ShortItemOption { OptionId = 0, OptionTitle = "Standard", OptionPrice = selectedItemForModal.Price ?? 0 };
+                tempOrderItem.SelectedOption = new ShortItemOption { OptionId = 0, OptionTitle="Standard", OptionPrice = selectedItemForModal.Price ?? 0 };
             }
             else
             {
-                // You might want to show an error message here
                 return;
             }
         }
-
+        
         tempOrderItem.Quantity = 1;
         currentOrder.Items.Add(tempOrderItem);
-
+        
         CloseCustomizationModal();
     }
 
@@ -293,3 +409,4 @@ else
         }
     }
 }
+

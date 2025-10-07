@@ -159,5 +159,16 @@ namespace SAPResturant.Application.API.Service.Service
                 };
             }
         }
+
+
+        public async Task<List<LittleCustomerInformationDTO>> GetCustomerLittleInformationDTOByPhoneNumber(string phoneNumber)
+        {
+            return await _context.Customers.AsNoTracking().Where(c => c.CustomerPhone.Contains(phoneNumber)).Select(c=>new LittleCustomerInformationDTO()
+            { 
+                CustomerId = c.CustomerId,
+                CustomerName = c.CustomerName,
+                CustomerPhoneNumber = c.CustomerPhone
+             }).ToListAsync();
+        }
     }
 }

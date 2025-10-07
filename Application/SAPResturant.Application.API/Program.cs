@@ -39,6 +39,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseCors("AllowBlazorApp");
 app.MapCashierEndpointApi();
+app.MapCustomerEndpointApi();
 app.MapGet("/", () => "Hello");
 
 app.Run();

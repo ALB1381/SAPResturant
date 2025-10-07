@@ -15,6 +15,7 @@ namespace SAPResturant.Application.API.EndpointSections
             var data = await service.GetCreateNewOrderFromCashierPageDTO();
                 return Results.Ok(data);
             });
+          
         }
     }
 }
