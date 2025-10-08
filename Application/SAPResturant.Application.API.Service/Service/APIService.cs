@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using SAPResturant.Application.API.Service.DTOs;
 using SAPResturant.Application.API.Service.Service.Interface;
 using SAPResturant.Inner.Data.Context;
+using SAPResturant.Inner.Data.Entities.Customers;
+using SAPResturant.Inner.Data.Entities.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,130 @@ namespace SAPResturant.Application.API.Service.Service
         {
             _context = sAPInnerResturant;
         }
+
+
+
+        public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
+        {
+            {
+                // Start a database transaction to ensure all operations succeed or fail together.
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    // ======================================================================
+                    // 1. Handle Customer: Use existing or create a new one
+                    // ======================================================================
+                    int? finalCustomerId = createNewOrderFormDTO.CustomerId;
+
+                    if (!finalCustomerId.HasValue && !string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
+                    {
+                        var newCustomer = new Customer
+                        {
+                            CustomerName = createNewOrderFormDTO.CustomerName,
+                            CustomerPhone = createNewOrderFormDTO.CustomerPhoneNumber,
+                            FirstShop = DateTime.UtcNow,
+                            // Set default values for other non-nullable fields
+                            IsEmailActivated = false,
+                            IsPhoneNumberValidated = false,
+                            MaderLog = "API_CASHIER_ORDER_CREATE"
+                        };
+                        _context.Customers.Add(newCustomer);
+                        await _context.SaveChangesAsync(); // Save to get the new CustomerId
+                        finalCustomerId = newCustomer.CustomerId;
+                    }
+
+                    // ======================================================================
+                    // 2. Fetch Prices and Prepare Sub-Orders
+                    // ======================================================================
+                    var itemCaseIds = createNewOrderFormDTO.SubOrders.Select(s => s.ItemCaseId).ToList();
+                    var extraIds = createNewOrderFormDTO.SubOrders.Where(s => s.ExtraOnItemId.HasValue).Select(s => s.ExtraOnItemId.Value).ToList();
+
+                    // Fetch all prices from the DB in one go for performance
+                    var itemCasePrices = await _context.ItemCases
+                        .Where(ic => itemCaseIds.Contains(ic.ItemCaseId))
+                        .ToDictionaryAsync(ic => ic.ItemCaseId, ic => ic.CasePrice);
+
+                    var extraPrices = await _context.ExtraOnItems
+                        .Where(e => extraIds.Contains(e.ExtraOnItemId))
+                        .ToDictionaryAsync(e => e.ExtraOnItemId, e => e.ExtraOnItemPrice);
+
+                    var subOrdersToCreate = new List<SubOuterOrder>();
+                    int totalSumPrice = 0;
+
+                    foreach (var subOrderDto in createNewOrderFormDTO.SubOrders)
+                    {
+                        // Calculate the price for one unit of this sub-order
+                        int singlePrice = itemCasePrices.GetValueOrDefault(subOrderDto.ItemCaseId, 0);
+                        if (subOrderDto.ExtraOnItemId.HasValue)
+                        {
+                            singlePrice += (int)extraPrices.GetValueOrDefault(subOrderDto.ExtraOnItemId.Value, 0);
+                        }
+
+                        int lineItemSumPrice = singlePrice * subOrderDto.Count;
+                        totalSumPrice += lineItemSumPrice;
+
+                        // Create the SubOuterOrder entity
+                        subOrdersToCreate.Add(new SubOuterOrder
+                        {
+                            ItemCaseID = subOrderDto.ItemCaseId,
+                            ExtraOnItemId = subOrderDto.ExtraOnItemId,
+                            Count = subOrderDto.Count,
+                            SinglePrice = singlePrice,
+                            SumPrice = lineItemSumPrice,
+                            // Automatically populated columns
+                            MadeDate = DateTime.UtcNow,
+                            CookedTime = DateTime.UtcNow.AddMinutes(5), // Simulate 5 min cook time
+                            MaderLog = "API_CASHIER_ORDER_CREATE"
+                        });
+                    }
+
+                    // ======================================================================
+                    // 3. Create the Main Order (OuterOrder)
+                    // ======================================================================
+                    // Calculate final prices (assuming a simple 9% tax for this example)
+                    int rawPrice = (int)(totalSumPrice / 1.09);
+                    int taxPrice = totalSumPrice - rawPrice;
+
+                    var newOrder = new OuterOrder
+                    {
+                        // Link to sub-orders
+                        SubOuterOrders = subOrdersToCreate,
+
+                        // Link to customer
+                        CustomerId = (int)finalCustomerId,
+
+                        // Automatically populated columns
+                        OrderDate = DateTime.UtcNow,
+                        OrderStatusId = 1, // Default to 1: 'Pending'
+                        SumPrice = totalSumPrice,
+                        RawPrice = rawPrice,
+                        TaxPrice = taxPrice,
+                        DeliveryPrice = 0, // Assuming this is a takeout order with no delivery fee
+                        DeliveredAddress = "Takeout Order", // Default address for non-delivery
+                        IsSnap = false,
+                        MaderLog = "API_CASHIER_ORDER_CREATE"
+                    };
+
+                    _context.OuterOrders.Add(newOrder);
+
+                    // ======================================================================
+                    // 4. Save All Changes and Commit Transaction
+                    // ======================================================================
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // If anything goes wrong, roll back all the changes.
+                    await transaction.RollbackAsync();
+                    throw; // Re-throw the exception to notify the caller of the failure.
+                }
+            }
+        }
+
+
+
 
         public async Task<CashierDashboardDTO> GetCashierDashboardInformationDTO()
         {

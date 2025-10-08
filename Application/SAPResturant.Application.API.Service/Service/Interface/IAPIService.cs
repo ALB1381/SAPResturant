@@ -16,5 +16,7 @@ namespace SAPResturant.Application.API.Service.Service.Interface
 
 
         public Task<List<LittleCustomerInformationDTO>> GetCustomerLittleInformationDTOByPhoneNumber(string phoneNumber);
+
+        public Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO);
     }
 }

@@ -26,7 +26,7 @@ else
                 <button @onclick="() => FilterItems(null)" class="@(selectedGroupId == null ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors">All</button>
                 @foreach (var group in createOrderData.ShortGroupInformation)
                 {
-                    <button @onclick="() => FilterItems(group.GroupId)" class="@(selectedGroupId == group.GroupId ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors" style="@(selectedGroupId != group.GroupId ? $"background-color: {group.GroupColor}; color: white;" : "")">
+                    <button @onclick="() => FilterItems(group.GroupId)" class="@(selectedGroupId == group.GroupId ? "bg-gray-900 text-white" : "bg-white/60") px-4 py-2 rounded-full shadow-sm transition-colors text-dark" style="@(selectedGroupId != group.GroupId ? $"background-color: {group.GroupColor}; color: white;" : "")">
                         @group.GroupName
                     </button>
                 }
