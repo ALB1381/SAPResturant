@@ -40,6 +40,7 @@ app.UseAuthorization();
 app.UseCors("AllowBlazorApp");
 app.MapCashierEndpointApi();
 app.MapCustomerEndpointApi();
+app.MapOrderEndpointApi();
 app.MapGet("/", () => "Hello");
 
 app.Run();

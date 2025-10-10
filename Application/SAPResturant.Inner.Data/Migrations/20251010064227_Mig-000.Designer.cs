@@ -12,7 +12,7 @@ using SAPResturant.Inner.Data.Context;
 namespace SAPResturant.Inner.Data.Migrations
 {
     [DbContext(typeof(SAPInnerResturantContext))]
-    [Migration("20251002070807_Mig-000")]
+    [Migration("20251010064227_Mig-000")]
     partial class Mig000
     {
         /// <inheritdoc />
@@ -351,6 +351,10 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OrderDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<int?>("OrderStatusId")
                         .HasColumnType("int");
 
@@ -439,6 +443,10 @@ namespace SAPResturant.Inner.Data.Migrations
 
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
+
+                    b.Property<string>("OredeDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("RawPrice")
                         .HasColumnType("int");

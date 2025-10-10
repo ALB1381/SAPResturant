@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Application\SAPResturant.Inner.Data\SAPResturant.Inner.Data.csproj" />
     <ProjectReference Include="..\SAPResturant.Data\SAPResturant.Data.csproj" />
     <ProjectReference Include="..\SAPResturant.Inner.Data\SAPResturant.Inner.Data.csproj" />
   </ItemGroup>

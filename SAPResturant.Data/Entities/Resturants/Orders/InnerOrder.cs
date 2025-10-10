@@ -12,6 +12,9 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         public int RawPrice { get; set; }
         public int TaxPrice { get; set; }
         public int SumPrice { get; set; }
+
+        [MaxLength(300)]
+        public string? OrderDescription { get; set; }
         #endregion
 
 

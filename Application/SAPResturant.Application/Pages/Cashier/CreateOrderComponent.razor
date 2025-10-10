@@ -206,12 +206,12 @@ else
             }
 
             <div class="mb-6">
-                 <h4 class="font-semibold mb-2">Payment Method</h4>
-                 <div class="grid grid-cols-3 gap-2">
-                     <button class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Pay with Card</button>
-                     <button class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Pay with Cash</button>
-                    <button class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
-                 </div>
+                <h4 class="font-semibold mb-2">Payment Method</h4>
+                <div class="grid grid-cols-3 gap-2">
+                    <button @onclick="() => SubmitOrder(1)" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Card</button>
+                    <button @onclick="() => SubmitOrder(2)" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Cash</button>
+                    <button @onclick="() => SubmitOrder(3)" class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
+                </div>
             </div>
 
             <button @onclick="CloseFinalizeModal" class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">Cancel</button>
@@ -406,6 +406,62 @@ else
         {
             if (item.Quantity > 1) item.Quantity--;
             else currentOrder.Items.Remove(item);
+        }
+    }
+
+
+
+
+    private async Task SubmitOrder(int paymentMethodId)
+    {
+        var orderDto = new CreateNewOrderFormDTO
+        {
+            CustomerId = currentOrder.SelectedCustomer?.CustomerId,
+            CustomerName = currentOrder.SelectedCustomer == null ? "Guest" : currentOrder.SelectedCustomer.CustomerName,
+            CustomerPhoneNumber = currentOrder.CustomerPhoneNumber,
+            Description = currentOrder.KitchenDescription,
+            SubOrders = currentOrder.Items.SelectMany(item =>
+            {
+                var subOrders = new List<SubOrderLittleInformationDTO>
+                {
+                    new SubOrderLittleInformationDTO
+                    {
+                        ItemCaseId = item.SelectedOption.OptionId,
+                        Count = item.Quantity,
+                        ExtraOnItemId = null // Main item case
+                    }
+                };
+                subOrders.AddRange(item.SelectedExtras.Select(extra => new SubOrderLittleInformationDTO
+                {
+                    ItemCaseId = item.SelectedOption.OptionId, // Associate extra with the main case
+                    Count = item.Quantity, // Assume one extra per main item count
+                    ExtraOnItemId = extra.ExtraOnItemId
+                }));
+                return subOrders;
+            }).ToList()
+        };
+
+        try
+        {
+            var response = await client.PostAsJsonAsync("api/Order/CreateNewOrderFromCashier", orderDto);
+            if (response.IsSuccessStatusCode)
+            {
+                // Order created successfully, reset for the next one
+                currentOrder = new OrderViewModel();
+                CloseFinalizeModal();
+                StateHasChanged();
+                // Optionally navigate to a success page or dashboard
+                // NavigationManager.NavigateTo("/dashboard");
+            }
+            else
+            {
+                Console.WriteLine($"Error creating order: {response.ReasonPhrase}");
+                // Handle error display to the user
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during order creation: {ex.Message}");
         }
     }
 }

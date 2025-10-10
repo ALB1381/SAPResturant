@@ -348,6 +348,10 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OrderDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<int?>("OrderStatusId")
                         .HasColumnType("int");
 
@@ -436,6 +440,10 @@ namespace SAPResturant.Inner.Data.Migrations
 
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
+
+                    b.Property<string>("OredeDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("RawPrice")
                         .HasColumnType("int");

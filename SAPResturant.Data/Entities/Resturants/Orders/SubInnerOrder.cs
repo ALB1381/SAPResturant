@@ -27,7 +27,7 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [ForeignKey("ExtraOnItemId")]
         public ExteraItem? ExteraItem { get; set; }
 
-        public long InnerOrderId { get; set; }
+        public long? InnerOrderId { get; set; }
         [ForeignKey("InnerOrderId")]
         public InnerOrder InnerOrder { get; set; }
 

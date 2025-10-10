@@ -16,6 +16,9 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int DeliveryPrice { get; set; }
         public int OrderStatusId { get; set; }
 
+        [MaxLength(300)]
+        public string? OredeDescription { get; set; }
+
         [MaxLength(800)]
         public string DeliveredAddress { get; set; }
 

@@ -8,9 +8,9 @@ namespace SAPResturant.Data.Entities.Resturants
         [Key]
         public int ConnectionId { get; set; }
 
-        public long TableReservationId { get; set; }
+        public long? TableReservationId { get; set; }
 
-        public long TableId { get; set; }
+        public long? TableId { get; set; }
 
         [ForeignKey("TableReservationId")]
         public TableReservation TableReservation { get; set; }

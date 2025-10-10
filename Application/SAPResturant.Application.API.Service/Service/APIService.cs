@@ -22,14 +22,11 @@ namespace SAPResturant.Application.API.Service.Service
             _context = sAPInnerResturant;
         }
 
-
-
         public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
         {
             {
                 // Start a database transaction to ensure all operations succeed or fail together.
                 await using var transaction = await _context.Database.BeginTransactionAsync();
-
                 try
                 {
                     // ======================================================================
@@ -285,7 +282,6 @@ namespace SAPResturant.Application.API.Service.Service
                 };
             }
         }
-
 
         public async Task<List<LittleCustomerInformationDTO>> GetCustomerLittleInformationDTOByPhoneNumber(string phoneNumber)
         {

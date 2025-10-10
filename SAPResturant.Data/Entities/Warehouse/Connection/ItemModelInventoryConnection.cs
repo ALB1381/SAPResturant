@@ -10,7 +10,7 @@ namespace SAPResturant.Data.Entities.Warehouse.Connection
         [Key]
         public long ConnectionId { get; set; }
 
-        public long InventoryId { get; set; }
+        public long? InventoryId { get; set; }
         public long ItemCaseId { get; set; }
 
         [ForeignKey("InventoryId")]

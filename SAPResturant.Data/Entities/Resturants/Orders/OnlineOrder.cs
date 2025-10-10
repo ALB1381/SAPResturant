@@ -18,6 +18,9 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [MaxLength(800)]
         public string DeliveredAddress { get; set; }
 
+        [MaxLength(300)]
+        public string? OrderDescription { get; set; }
+
         #endregion
 
 

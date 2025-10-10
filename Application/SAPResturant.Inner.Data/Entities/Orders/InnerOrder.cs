@@ -15,6 +15,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int TaxPrice { get; set; }
         public int SumPrice { get; set; }
 
+        [MaxLength(300)]
+        public string? OrderDescription { get; set; }
         public int? OrderStatusId { get; set; }
         [ForeignKey("OrderStatusId")]
         public OrderStatus? OrderStatus { get; set; }
@@ -33,6 +35,8 @@ namespace SAPResturant.Inner.Data.Entities.Orders
 
         public List<Transaction>? Transactions { get; set; }
         public List<SubInnerOrder>? SubInnerOrders { get; set; }
+
+
 
 
         [MaxLength(40)]

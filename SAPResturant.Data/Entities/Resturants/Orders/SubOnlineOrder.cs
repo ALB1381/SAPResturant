@@ -17,6 +17,7 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         #endregion
 
 
+
         #region Rel
         public long? ItemCaseID { get; set; }
         [ForeignKey("ItemCaseID")]
@@ -26,9 +27,9 @@ namespace SAPResturant.Data.Entities.Resturants.Orders
         [ForeignKey("ExtraOnItemId")]
         public ExteraItem? ExteraItem { get; set; }
 
-        public long OuterOrderId { get; set; }
+        public long? OuterOrderId { get; set; }
         [ForeignKey("OuterOrderId")]
-        public OnlineOrder OnlineOrder { get; set; }
+        public OnlineOrder? OnlineOrder { get; set; }
 
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
