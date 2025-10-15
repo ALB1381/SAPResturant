@@ -24,15 +24,14 @@ namespace SAPResturant.Application.API.Service.Service
 
         public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
         {
-            {
-                // Start a database transaction to ensure all operations succeed or fail together.
+            //First we should add many Extra on items for each Sub order 
+           //
+
                 await using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    // ======================================================================
-                    // 1. Handle Customer: Use existing or create a new one
-                    // ======================================================================
-                    int? finalCustomerId = createNewOrderFormDTO.CustomerId;
+
+                int? finalCustomerId = createNewOrderFormDTO.CustomerId;
 
                     if (!finalCustomerId.HasValue && !string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
                     {
@@ -41,23 +40,21 @@ namespace SAPResturant.Application.API.Service.Service
                             CustomerName = createNewOrderFormDTO.CustomerName,
                             CustomerPhone = createNewOrderFormDTO.CustomerPhoneNumber,
                             FirstShop = DateTime.UtcNow,
-                            // Set default values for other non-nullable fields
+                    
                             IsEmailActivated = false,
                             IsPhoneNumberValidated = false,
                             MaderLog = "API_CASHIER_ORDER_CREATE"
                         };
                         _context.Customers.Add(newCustomer);
-                        await _context.SaveChangesAsync(); // Save to get the new CustomerId
+                        await _context.SaveChangesAsync();
                         finalCustomerId = newCustomer.CustomerId;
                     }
 
-                    // ======================================================================
-                    // 2. Fetch Prices and Prepare Sub-Orders
-                    // ======================================================================
-                    var itemCaseIds = createNewOrderFormDTO.SubOrders.Select(s => s.ItemCaseId).ToList();
-                    var extraIds = createNewOrderFormDTO.SubOrders.Where(s => s.ExtraOnItemId.HasValue).Select(s => s.ExtraOnItemId.Value).ToList();
 
-                    // Fetch all prices from the DB in one go for performance
+                    var itemCaseIds = createNewOrderFormDTO.SubOrders.Select(s => s.ItemCaseId).ToList();
+                    var extraIds = createNewOrderFormDTO.SubOrders.Where(s => s.ExtraOnItemId.Any()).Select(s => s.ExtraOnItemId).ToList();
+
+            
                     var itemCasePrices = await _context.ItemCases
                         .Where(ic => itemCaseIds.Contains(ic.ItemCaseId))
                         .ToDictionaryAsync(ic => ic.ItemCaseId, ic => ic.CasePrice);
@@ -71,7 +68,7 @@ namespace SAPResturant.Application.API.Service.Service
 
                     foreach (var subOrderDto in createNewOrderFormDTO.SubOrders)
                     {
-                        // Calculate the price for one unit of this sub-order
+                      
                         int singlePrice = itemCasePrices.GetValueOrDefault(subOrderDto.ItemCaseId, 0);
                         if (subOrderDto.ExtraOnItemId.HasValue)
                         {
@@ -118,9 +115,11 @@ namespace SAPResturant.Application.API.Service.Service
                         RawPrice = rawPrice,
                         TaxPrice = taxPrice,
                         DeliveryPrice = 0, // Assuming this is a takeout order with no delivery fee
-                        DeliveredAddress = "Takeout Order", // Default address for non-delivery
+                        DeliveredAddress = "Takeout Order", 
                         IsSnap = false,
-                        MaderLog = "API_CASHIER_ORDER_CREATE"
+                        MaderLog = $"API_CASHIER_ORDER_CREATE--{createNewOrderFormDTO.LogFromClient}",
+                        OredeDescription = createNewOrderFormDTO.Description
+
                     };
 
                     _context.OuterOrders.Add(newOrder);
@@ -137,7 +136,7 @@ namespace SAPResturant.Application.API.Service.Service
                     await transaction.RollbackAsync();
                     throw; // Re-throw the exception to notify the caller of the failure.
                 }
-            }
+            
         }
 
 
