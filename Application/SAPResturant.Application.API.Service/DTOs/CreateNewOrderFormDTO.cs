@@ -16,6 +16,7 @@ namespace SAPResturant.Application.API.Service.DTOs
         public int? TableId { get; set; }
         public string OrderType { get; set; }
         public string LogFromClient { get; set; }
+        public bool IsMan { get; set; }
     }
     public class SubOrderLittleInformationDTO
     {

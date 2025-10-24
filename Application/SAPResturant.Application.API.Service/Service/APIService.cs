@@ -1,5 +1,4 @@
-﻿
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SAPResturant.Application.API.Service.DTOs;
 using SAPResturant.Application.API.Service.Service.Interface;
@@ -24,123 +23,128 @@ namespace SAPResturant.Application.API.Service.Service
 
         public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
         {
-            //First we should add many Extra on items for each Sub order 
-           //
+            // Use a transaction to ensure atomicity.
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
-                await using var transaction = await _context.Database.BeginTransactionAsync();
-                try
-                {
-
+            try
+            {
+                // 1. Handle Customer: Use existing or create a new one.
                 int? finalCustomerId = createNewOrderFormDTO.CustomerId;
-
-                    if (!finalCustomerId.HasValue && !string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
+                if (!finalCustomerId.HasValue && !string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
+                {
+                    var newCustomer = new Customer
                     {
-                        var newCustomer = new Customer
-                        {
-                            CustomerName = createNewOrderFormDTO.CustomerName,
-                            CustomerPhone = createNewOrderFormDTO.CustomerPhoneNumber,
-                            FirstShop = DateTime.UtcNow,
-                    
-                            IsEmailActivated = false,
-                            IsPhoneNumberValidated = false,
-                            MaderLog = "API_CASHIER_ORDER_CREATE"
-                        };
-                        _context.Customers.Add(newCustomer);
-                        await _context.SaveChangesAsync();
-                        finalCustomerId = newCustomer.CustomerId;
-                    }
+                        CustomerName = createNewOrderFormDTO.CustomerName,
+                        CustomerPhone = createNewOrderFormDTO.CustomerPhoneNumber,
+                        FirstShop = DateTime.UtcNow,
+                        IsEmailActivated = false,
+                        IsPhoneNumberValidated = false,
+                        MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty,
+                        IsMan = createNewOrderFormDTO.IsMan,
+                    };
+                    _context.Customers.Add(newCustomer);
+                    await _context.SaveChangesAsync();
+                    finalCustomerId = newCustomer.CustomerId;
+                }
 
+                // 2. Create the Order (Inner or Outer).
+                if (createNewOrderFormDTO.OrderType == "Inner")
+                {
+                    var subDtos = createNewOrderFormDTO.SubOrders ?? new List<SubOrderLittleInformationDTO>();
 
-                    var itemCaseIds = createNewOrderFormDTO.SubOrders.Select(s => s.ItemCaseId).ToList();
-                    var extraIds = createNewOrderFormDTO.SubOrders.Where(s => s.ExtraOnItemId.Any()).Select(s => s.ExtraOnItemId).ToList();
+                    // Gather ids to minimize DB roundtrips
+                    var caseIds = subDtos.Select(s => s.ItemCaseId).Distinct().ToList();
+                    var extraIds = subDtos.Where(s => s.ExtraOnItemId != null)
+                                          .SelectMany(s => s.ExtraOnItemId!)
+                                          .Distinct()
+                                          .ToList();
 
-            
-                    var itemCasePrices = await _context.ItemCases
-                        .Where(ic => itemCaseIds.Contains(ic.ItemCaseId))
-                        .ToDictionaryAsync(ic => ic.ItemCaseId, ic => ic.CasePrice);
+                    var itemCases = await _context.ItemCases.Where(ic => caseIds.Contains(ic.ItemCaseId)).ToListAsync();
+                    var extras = await _context.ExtraOnItems.Where(e => extraIds.Contains(e.ExtraOnItemId)).ToListAsync();
 
-                    var extraPrices = await _context.ExtraOnItems
-                        .Where(e => extraIds.Contains(e.ExtraOnItemId))
-                        .ToDictionaryAsync(e => e.ExtraOnItemId, e => e.ExtraOnItemPrice);
+                    // Build sub-order entities (without InnerOrderId yet)
+                    var subInnerOrders = new List<SubInnerOrder>();
+                    int rawPrice = 0;
 
-                    var subOrdersToCreate = new List<SubOuterOrder>();
-                    int totalSumPrice = 0;
-
-                    foreach (var subOrderDto in createNewOrderFormDTO.SubOrders)
+                    foreach (var sd in subDtos)
                     {
-                      
-                        int singlePrice = itemCasePrices.GetValueOrDefault(subOrderDto.ItemCaseId, 0);
-                        if (subOrderDto.ExtraOnItemId.HasValue)
+                        var itemCase = itemCases.FirstOrDefault(c => c.ItemCaseId == sd.ItemCaseId);
+                        int casePrice = itemCase?.CasePrice ?? 0;
+
+                        int extrasSum = 0;
+                        if (sd.ExtraOnItemId != null && sd.ExtraOnItemId.Any())
                         {
-                            singlePrice += (int)extraPrices.GetValueOrDefault(subOrderDto.ExtraOnItemId.Value, 0);
+                            foreach (var exId in sd.ExtraOnItemId)
+                            {
+                                var ex = extras.FirstOrDefault(e => e.ExtraOnItemId == exId);
+                                extrasSum += ex?.ExtraOnItemPrice ?? 0;
+                            }
                         }
 
-                        int lineItemSumPrice = singlePrice * subOrderDto.Count;
-                        totalSumPrice += lineItemSumPrice;
+                        int singlePrice = casePrice + extrasSum;
+                        int sumPrice = singlePrice * sd.Count;
+                        rawPrice += sumPrice;
 
-                        // Create the SubOuterOrder entity
-                        subOrdersToCreate.Add(new SubOuterOrder
+                        var sub = new SubInnerOrder
                         {
-                            ItemCaseID = subOrderDto.ItemCaseId,
-                            ExtraOnItemId = subOrderDto.ExtraOnItemId,
-                            Count = subOrderDto.Count,
+                            Count = sd.Count,
                             SinglePrice = singlePrice,
-                            SumPrice = lineItemSumPrice,
-                            // Automatically populated columns
+                            SumPrice = sumPrice,
                             MadeDate = DateTime.UtcNow,
-                            CookedTime = DateTime.UtcNow.AddMinutes(5), // Simulate 5 min cook time
-                            MaderLog = "API_CASHIER_ORDER_CREATE"
-                        });
+                            CookedTime = DateTime.UtcNow,
+                            DeliveredTime = DateTime.UtcNow,
+                            ItemCaseID = sd.ItemCaseId,
+                            // FK will be set after parent order is created; store first extra id (if any)
+                            ExtraOnItemId = sd.ExtraOnItemId?.FirstOrDefault(),
+                            MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty
+                        };
+
+                        subInnerOrders.Add(sub);
                     }
 
-                    // ======================================================================
-                    // 3. Create the Main Order (OuterOrder)
-                    // ======================================================================
-                    // Calculate final prices (assuming a simple 9% tax for this example)
-                    int rawPrice = (int)(totalSumPrice / 1.09);
-                    int taxPrice = totalSumPrice - rawPrice;
+                    // Tax and total (use 10% as in UI)
+                    int taxPrice = (int)Math.Round(rawPrice * 0.10);
+                    int sumPriceTotal = rawPrice + taxPrice;
 
-                    var newOrder = new OuterOrder
+                    // Create parent order first (without attaching children)
+                    var newOrder = new InnerOrder
                     {
-                        // Link to sub-orders
-                        SubOuterOrders = subOrdersToCreate,
-
-                        // Link to customer
-                        CustomerId = (int)finalCustomerId,
-
-                        // Automatically populated columns
+                        CustomerId = finalCustomerId,
+                        TableId = createNewOrderFormDTO.TableId,
+                        OrderDescription = createNewOrderFormDTO.Description,
                         OrderDate = DateTime.UtcNow,
-                        OrderStatusId = 1, // Default to 1: 'Pending'
-                        SumPrice = totalSumPrice,
+                        OrderStatusId = 1, // default new order status
+                        MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty,
                         RawPrice = rawPrice,
                         TaxPrice = taxPrice,
-                        DeliveryPrice = 0, // Assuming this is a takeout order with no delivery fee
-                        DeliveredAddress = "Takeout Order", 
-                        IsSnap = false,
-                        MaderLog = $"API_CASHIER_ORDER_CREATE--{createNewOrderFormDTO.LogFromClient}",
-                        OredeDescription = createNewOrderFormDTO.Description
-
+                        SumPrice = sumPriceTotal
                     };
 
-                    _context.OuterOrders.Add(newOrder);
-
-                    // ======================================================================
-                    // 4. Save All Changes and Commit Transaction
-                    // ======================================================================
+                    _context.InnerOrders.Add(newOrder);
+                    // Save to get generated InnerOrderId
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+
+                    // Now set the FK for each sub-order and insert them
+                    foreach (var sub in subInnerOrders)
+                    {
+                        sub.InnerOrderId = newOrder.InnerOrderId;
+                    }
+
+                    if (subInnerOrders.Any())
+                    {
+                        _context.SubInnerOrders.AddRange(subInnerOrders);
+                        await _context.SaveChangesAsync();
+                    }
                 }
-                catch (Exception)
-                {
-                    // If anything goes wrong, roll back all the changes.
-                    await transaction.RollbackAsync();
-                    throw; // Re-throw the exception to notify the caller of the failure.
-                }
-            
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw; // Propagate the error.
+            }
         }
-
-
-
 
         public async Task<CashierDashboardDTO> GetCashierDashboardInformationDTO()
         {

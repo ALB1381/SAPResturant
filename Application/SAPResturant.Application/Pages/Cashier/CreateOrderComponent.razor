@@ -52,11 +52,11 @@ else
                 <h2 class="text-xl font-bold">New Order</h2>
                 <div class="flex items-center">
                     <span class="font-semibold mr-2">Table:</span>
-                    <select @bind="currentOrder.TableId" class="p-2 rounded-xl border-none bg-white/50 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        <option value="0">Select Table</option>
+                    <select class="p-2 rounded-xl border-none bg-white/50 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <option @onselect="() => changeSelectedTable(0)" value="0">Select Table</option>
                         @foreach (var table in createOrderData.TableLittleInfos)
                         {
-                            <option value="@table.TableId">@table.TableName (@table.CountOdSeats seats)</option>
+                            <option @onselect="()=>changeSelectedTable(table.TableId)" value="@table.TableId">@table.TableName (@table.CountOdSeats seats)</option>
                         }
                     </select>
                 </div>
@@ -118,7 +118,7 @@ else
     <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-40" @onclick="CloseCustomizationModal">
         <div class="glass-card rounded-3xl w-full max-w-md p-6" @onclick:stopPropagation="true">
             <h3 class="text-2xl font-bold mb-4">Customize @selectedItemForModal.ItemName</h3>
-            
+
             @if (selectedItemForModal.ItemOptions != null && selectedItemForModal.ItemOptions.Any())
             {
                 <div class="mb-4">
@@ -144,7 +144,7 @@ else
                         @foreach (var extra in selectedItemForModal.ShortExtraOnItems)
                         {
                             <label class="flex items-center p-3 rounded-lg cursor-pointer @(tempOrderItem.SelectedExtras.Contains(extra) ? "bg-blue-200" : "bg-white/50")">
-                                <input type="checkbox" class="hidden" @onchange="(e) => ToggleExtra(extra, (bool)e.Value)" />
+                                <input type="checkbox" class="hidden" @onchange="(e) => ToggleExtra(extra, (bool)e.Value, selectedItemForModal.ItemId)" />
                                 <span class="flex-1">@extra.ExtraOnItemName</span>
                                 <span class="font-semibold">+ $@extra.ExtraOnItemPrice?.ToString("F2")</span>
                             </label>
@@ -167,7 +167,7 @@ else
     <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50" @onclick="CloseFinalizeModal">
         <div class="glass-card rounded-3xl w-full max-w-lg p-6" @onclick:stopPropagation="true">
             <h3 class="text-2xl font-bold mb-4">Finalize & Pay</h3>
-            
+
             <div class="mb-4">
                 <label for="kitchenNotes" class="font-semibold mb-2 block">Notes for Kitchen/Bar</label>
                 <textarea id="kitchenNotes" @bind="currentOrder.KitchenDescription" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" rows="3" placeholder="e.g., extra spicy, no onions..."></textarea>
@@ -176,7 +176,7 @@ else
             <div class="mb-4 relative">
                 <label for="customerPhone" class="font-semibold mb-2 block">Customer Phone (Optional)</label>
                 <input id="customerPhone" type="tel" @bind="currentOrder.CustomerPhoneNumber" @bind:event="oninput" onchange="@HandlePhoneNumberInput" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter phone to find customer...">
-                
+
                 @if (customerSuggestions.Any())
                 {
                     <div class="absolute w-full mt-1 bg-white rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
@@ -199,7 +199,7 @@ else
             }
             @if (customerNotFound)
             {
-                 <div class="p-3 rounded-lg bg-yellow-100 text-yellow-800 mb-4 flex justify-between items-center">
+                <div class="p-3 rounded-lg bg-yellow-100 text-yellow-800 mb-4 flex justify-between items-center">
                     <span>Customer not found.</span>
                     <button class="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-bold">Add New Customer</button>
                 </div>
@@ -211,6 +211,10 @@ else
                     <button @onclick="() => SubmitOrder(1)" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Card</button>
                     <button @onclick="() => SubmitOrder(2)" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Cash</button>
                     <button @onclick="() => SubmitOrder(3)" class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button @onclick="@(() => DetermineSexOfCustomer("Man"))" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors @((IsMan)?"bg-red":" bg-blue-500") ">Man</button>
+                    <button @onclick="@(() => DetermineSexOfCustomer("Woman"))" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors @((IsMan) ? "bg-blue-500" : "bg-red") ">Woman</button>
                 </div>
             </div>
 
@@ -227,10 +231,10 @@ else
 
     private CreatNewOrderDTO? createOrderData;
     private OrderViewModel currentOrder = new();
-    
+
     private int? selectedGroupId = null;
     private string searchTerm = "";
-    
+
     // Modal States
     private bool showCustomizationModal = false;
     private bool showFinalizeModal = false;
@@ -239,13 +243,16 @@ else
     private ShortItemInformation? selectedItemForModal;
     private OrderItemViewModel tempOrderItem = new();
 
+
     // Finalize Modal State & Customer Search
     private List<LittleCustomerInformationDTO> customerSuggestions = new();
     private bool customerNotFound = false;
     private HttpClient client = new();
-
+    private List<SelectedExtraOnItemModel>? SelectedExtraOnItemModels { get; set; }
+    public bool IsMan { get; set; }
     protected override async Task OnInitializedAsync()
     {
+        SelectedExtraOnItemModels = new List<SelectedExtraOnItemModel>();
         client = HttpClientFactory.CreateClient("Api");
         try
         {
@@ -256,7 +263,7 @@ else
             Console.WriteLine($"Failed to fetch initial order data: {ex.Message}");
         }
     }
-    
+
     // --- View Models For UI State ---
     public class OrderViewModel
     {
@@ -279,14 +286,20 @@ else
         public int Quantity { get; set; }
         public decimal TotalItemPrice => ((decimal)(SelectedOption?.OptionPrice ?? BaseItem.Price ?? 0) + (decimal)(SelectedExtras.Sum(e => e.ExtraOnItemPrice) ?? 0)) * Quantity;
     }
-    
-    public class LittleCustomerInformationDTO 
+
+    public class LittleCustomerInformationDTO
     {
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerPhoneNumber { get; set; }
     }
 
+    private class SelectedExtraOnItemModel
+    {
+
+        public int Id { get; set; }
+        public int CaseId { get; set; }
+    }
 
     private IEnumerable<ShortItemInformation> GetFilteredItems()
     {
@@ -305,19 +318,19 @@ else
     }
 
     private void FilterItems(int? groupId) => selectedGroupId = groupId;
-    
+
     private void OpenCustomizationModal(ShortItemInformation item)
     {
         selectedItemForModal = item;
         var defaultOption = item.ItemOptions?.FirstOrDefault();
-        
+
         tempOrderItem = new OrderItemViewModel { BaseItem = item, SelectedOption = defaultOption };
         showCustomizationModal = true;
     }
 
     private void CloseCustomizationModal() => showCustomizationModal = false;
     private void OpenFinalizeModal() => showFinalizeModal = true;
-    private void CloseFinalizeModal() 
+    private void CloseFinalizeModal()
     {
         showFinalizeModal = false;
         customerSuggestions.Clear();
@@ -329,22 +342,22 @@ else
         currentOrder.CustomerPhoneNumber = e.Value?.ToString();
         customerNotFound = false;
         customerSuggestions.Clear();
-        currentOrder.SelectedCustomer = null; 
+        currentOrder.SelectedCustomer = null;
 
         if (!string.IsNullOrWhiteSpace(currentOrder.CustomerPhoneNumber) && currentOrder.CustomerPhoneNumber.Length > 2)
         {
             try
             {
-                 customerSuggestions = await client.GetFromJsonAsync<List<LittleCustomerInformationDTO>>($"api/Customer/GetUserNamesByPhoneNumber/{currentOrder.CustomerPhoneNumber}");
-                 if(customerSuggestions == null || !customerSuggestions.Any())
-                 {
+                customerSuggestions = await client.GetFromJsonAsync<List<LittleCustomerInformationDTO>>($"api/Customer/GetUserNamesByPhoneNumber/{currentOrder.CustomerPhoneNumber}");
+                if (customerSuggestions == null || !customerSuggestions.Any())
+                {
                     customerNotFound = true;
-                 }
+                }
             }
             catch (Exception ex)
             {
-                 Console.WriteLine($"Failed to fetch customers: {ex.Message}");
-                 customerNotFound = true;
+                Console.WriteLine($"Failed to fetch customers: {ex.Message}");
+                customerNotFound = true;
             }
         }
     }
@@ -357,15 +370,18 @@ else
         customerNotFound = false;
     }
 
-    private void ToggleExtra(ShortExtraOnItem extra, bool isChecked)
+    private void ToggleExtra(ShortExtraOnItem extra, bool isChecked, int CaseId)
     {
         if (isChecked)
         {
-            if (!tempOrderItem.SelectedExtras.Contains(extra)) tempOrderItem.SelectedExtras.Add(extra);
+            if (!tempOrderItem.SelectedExtras.Contains(extra))
+                tempOrderItem.SelectedExtras.Add(extra);
+            SelectedExtraOnItemModels.Add(new SelectedExtraOnItemModel { Id = extra.ExtraOnItemId, CaseId = CaseId });
         }
         else
         {
             tempOrderItem.SelectedExtras.Remove(extra);
+            SelectedExtraOnItemModels.Remove(SelectedExtraOnItemModels.FirstOrDefault(q => q.Id == extra.ExtraOnItemId && q.CaseId == CaseId));
         }
     }
 
@@ -373,23 +389,23 @@ else
     {
         if (tempOrderItem.SelectedOption == null)
         {
-            if(selectedItemForModal?.ItemOptions?.Count == 1)
+            if (selectedItemForModal?.ItemOptions?.Count == 1)
             {
                 tempOrderItem.SelectedOption = selectedItemForModal.ItemOptions.First();
             }
             else if (selectedItemForModal?.Price != null)
             {
-                tempOrderItem.SelectedOption = new ShortItemOption { OptionId = 0, OptionTitle="Standard", OptionPrice = selectedItemForModal.Price ?? 0 };
+                tempOrderItem.SelectedOption = new ShortItemOption { OptionId = 0, OptionTitle = "Standard", OptionPrice = selectedItemForModal.Price ?? 0 };
             }
             else
             {
                 return;
             }
         }
-        
+
         tempOrderItem.Quantity = 1;
         currentOrder.Items.Add(tempOrderItem);
-        
+
         CloseCustomizationModal();
     }
 
@@ -414,12 +430,17 @@ else
 
     private async Task SubmitOrder(int paymentMethodId)
     {
+        //To Do: User Cashier User Name in Mader Log
         var orderDto = new CreateNewOrderFormDTO
         {
             CustomerId = currentOrder.SelectedCustomer?.CustomerId,
             CustomerName = currentOrder.SelectedCustomer == null ? "Guest" : currentOrder.SelectedCustomer.CustomerName,
             CustomerPhoneNumber = currentOrder.CustomerPhoneNumber,
             Description = currentOrder.KitchenDescription,
+            IsMan = IsMan,
+            OrderType = "Inner",
+            LogFromClient = "Made From Cashier {Cashier User Name}",
+            TableId = currentOrder.TableId,
             SubOrders = currentOrder.Items.SelectMany(item =>
             {
                 var subOrders = new List<SubOrderLittleInformationDTO>
@@ -428,21 +449,19 @@ else
                     {
                         ItemCaseId = item.SelectedOption.OptionId,
                         Count = item.Quantity,
-                        ExtraOnItemId = null // Main item case
+                        ExtraOnItemId = SelectedExtraOnItemModels
+                            .Where(e => e.CaseId == item.BaseItem.ItemId)
+                            .Select(e => e.Id)
+                            .ToList()
                     }
                 };
-                subOrders.AddRange(item.SelectedExtras.Select(extra => new SubOrderLittleInformationDTO
-                {
-                    ItemCaseId = item.SelectedOption.OptionId, // Associate extra with the main case
-                    Count = item.Quantity, // Assume one extra per main item count
-                    ExtraOnItemId = extra.ExtraOnItemId
-                }));
                 return subOrders;
             }).ToList()
         };
 
         try
         {
+
             var response = await client.PostAsJsonAsync("api/Order/CreateNewOrderFromCashier", orderDto);
             if (response.IsSuccessStatusCode)
             {
@@ -463,6 +482,23 @@ else
         {
             Console.WriteLine($"Exception during order creation: {ex.Message}");
         }
+    }
+
+    private void DetermineSexOfCustomer(string Sex)
+    {
+        if (Sex=="Man")
+        {
+            IsMan = true;
+        }
+        else if (Sex == "Woman")
+        {
+            IsMan = false;
+        }
+    }
+
+    private void changeSelectedTable(int tableId)
+    {
+        currentOrder.TableId = tableId;
     }
 }
 
