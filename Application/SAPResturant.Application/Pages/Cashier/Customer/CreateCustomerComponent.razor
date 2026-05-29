@@ -1,0 +1,115 @@
+﻿@page "/Customer/Create"
+@using SAPResturant.Application.DTOs
+
+<div class="glass-card rounded-3xl w-full max-w-lg p-6 shadow-lg bg-white/50 backdrop-blur-sm">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold">Add New Customer</h3>
+
+        @if (IsModal)
+        {
+            <button @onclick="Cancel" class="text-gray-500 hover:text-gray-800 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        }
+    </div>
+
+    <EditForm Model="DTO" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-red-500 mb-4 text-sm font-semibold" />
+
+        <div class="space-y-4">
+            <div>
+                <label for="CustomerName" class="font-semibold mb-2 block">Customer Name</label>
+                <InputText id="CustomerName" @bind-Value="DTO.CustomerName" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter full name" />
+            </div>
+
+            <div>
+                <label for="CustomerPhoneNumber" class="font-semibold mb-2 block">Phone Number</label>
+                <InputText id="CustomerPhoneNumber" @bind-Value="DTO.CustomerPhoneNumber" type="tel" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="e.g., 555-0123" />
+            </div>
+
+            <div class="flex space-x-4">
+                <div class="flex-1">
+                    <label for="Age" class="font-semibold mb-2 block">Age</label>
+                    <InputNumber id="Age" @bind-Value="DTO.Age" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Age" />
+                </div>
+                <div class="flex-1">
+                    <label for="Sex" class="font-semibold mb-2 block">Sex</label>
+                    <InputSelect id="Sex" @bind-Value="DTO.Sex" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card">
+                        <option value="">Select...</option>
+                        <option value="Man">Man</option>
+                        <option value="Woman">Woman</option>
+                        <option value="Other">Other</option>
+                    </InputSelect>
+                </div>
+            </div>
+
+            <div>
+                <label for="CustomerAddress" class="font-semibold mb-2 block">Address</label>
+                <InputTextArea id="CustomerAddress" @bind-Value="DTO.CustomerAddress" rows="2" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter full address..." />
+            </div>
+
+            <div>
+                <label for="Log" class="font-semibold mb-2 block">Creation Log</label>
+                <InputTextArea id="Log" @bind-Value="DTO.Log" rows="2" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="System log or notes..." />
+            </div>
+        </div>
+
+        <div class="mt-8 flex space-x-3">
+            @if (IsModal)
+            {
+                <button type="button" @onclick="Cancel" class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">
+                    Cancel
+                </button>
+            }
+            <button type="submit" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-colors">
+                Save Customer
+            </button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    // The data model
+    [Parameter]
+    public CreateNewCustomerDTO DTO { get; set; } = new();
+
+    // Determines if we render cancel/close buttons for a modal view
+    [Parameter]
+    public bool IsModal { get; set; } = false;
+
+    // Events to notify the parent component
+    [Parameter]
+    public EventCallback<CreateNewCustomerDTO> OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        DTO ??= new CreateNewCustomerDTO();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // If a parent component is listening, send the data up!
+        if (OnSave.HasDelegate)
+        {
+            await OnSave.InvokeAsync(DTO);
+        }
+        else
+        {
+            // FALLBACK: If there is no parent (e.g., opened as a standalone page),
+            // you would inject HttpClient and post it directly here.
+            // await Http.PostAsJsonAsync("api/Customer", DTO);
+        }
+    }
+
+    private async Task Cancel()
+    {
+        if (OnCancel.HasDelegate)
+        {
+            await OnCancel.InvokeAsync();
+        }
+    }
+}

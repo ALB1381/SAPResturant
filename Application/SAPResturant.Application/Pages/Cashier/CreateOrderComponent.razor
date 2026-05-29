@@ -3,6 +3,7 @@
 @using System.Net.Http.Json
 @using SAPResturant.Application.DTOs
 @inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager;
 
 
 <AddressingComponent ThisPageUrl="/orders/CreateNew" LastPageUrl="@lastpage" TitleName="Add New Order"></AddressingComponent>
@@ -201,27 +202,39 @@ else
             {
                 <div class="p-3 rounded-lg bg-yellow-100 text-yellow-800 mb-4 flex justify-between items-center">
                     <span>Customer not found.</span>
-                    <button class="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-bold">Add New Customer</button>
+                    <button @onclick="()=> showCustomerModal = true" class="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-bold">Add New Customer</button>
                 </div>
             }
 
             <div class="mb-6">
+                <h4 class="font-semibold mb-2">Sex</h4>
+                <div class="grid grid-cols-4 gap-2 m-4 text-center">
+                    <button @onclick="@(() => DetermineSexOfCustomer("Man"))" class="col-start-2 p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors @((IsMan) ? "bg-red" : " bg-blue-500") ">Man</button>
+                    <button @onclick="@(() => DetermineSexOfCustomer("Woman"))" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors @((IsMan) ? "bg-blue-500" : "bg-red") ">Woman</button>
+                </div>
                 <h4 class="font-semibold mb-2">Payment Method</h4>
                 <div class="grid grid-cols-3 gap-2">
                     <button @onclick="() => SubmitOrder(1)" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Card</button>
                     <button @onclick="() => SubmitOrder(2)" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Cash</button>
                     <button @onclick="() => SubmitOrder(3)" class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <button @onclick="@(() => DetermineSexOfCustomer("Man"))" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors @((IsMan)?"bg-red":" bg-blue-500") ">Man</button>
-                    <button @onclick="@(() => DetermineSexOfCustomer("Woman"))" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors @((IsMan) ? "bg-blue-500" : "bg-red") ">Woman</button>
-                </div>
+               
             </div>
 
             <button @onclick="CloseFinalizeModal" class="w-full py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold transition-colors">Cancel</button>
         </div>
     </div>
 }
+
+@if(showCustomerModal)
+{
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+       <SAPResturant.Application.Pages.Cashier.Customer.CreateCustomerComponent OnCancel="CloseCustomerModal" IsModal=true OnSave="HandleCustomerSaved">
+
+       </SAPResturant.Application.Pages.Cashier.Customer.CreateCustomerComponent>
+    </div>
+}
+
 
 
 @code {
@@ -238,6 +251,7 @@ else
     // Modal States
     private bool showCustomizationModal = false;
     private bool showFinalizeModal = false;
+    private bool showCustomerModal = false;
 
     // Customization Modal State
     private ShortItemInformation? selectedItemForModal;
@@ -335,6 +349,10 @@ else
         showFinalizeModal = false;
         customerSuggestions.Clear();
         customerNotFound = false;
+    }
+    private void CloseCustomerModal()
+    {
+        showCustomerModal = false;
     }
 
     private async Task HandlePhoneNumberInput(ChangeEventArgs e)
@@ -457,6 +475,8 @@ else
                 };
                 return subOrders;
             }).ToList()
+
+
         };
 
         try
@@ -471,6 +491,7 @@ else
                 StateHasChanged();
                 // Optionally navigate to a success page or dashboard
                 // NavigationManager.NavigateTo("/dashboard");
+                ReloadPage();
             }
             else
             {
@@ -499,6 +520,19 @@ else
     private void changeSelectedTable(int tableId)
     {
         currentOrder.TableId = tableId;
+    }
+
+    private void ReloadPage()
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
+    }
+
+    private async Task HandleCustomerSaved(CreateNewCustomerDTO newCustomer)
+    {
+        // 1. Send newCustomer to your API
+        // 2. Add them to your current order
+        // 3. Close the modal
+        showCustomerModal = false;
     }
 }
 

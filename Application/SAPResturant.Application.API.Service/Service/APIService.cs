@@ -21,6 +21,11 @@ namespace SAPResturant.Application.API.Service.Service
             _context = sAPInnerResturant;
         }
 
+        public Task CreateNewCustomer()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
         {
             // Use a transaction to ensure atomicity.
@@ -30,7 +35,7 @@ namespace SAPResturant.Application.API.Service.Service
             {
                 // 1. Handle Customer: Use existing or create a new one.
                 int? finalCustomerId = createNewOrderFormDTO.CustomerId;
-                if (!finalCustomerId.HasValue && !string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
+                if (!finalCustomerId.HasValue && string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
                 {
                     var newCustomer = new Customer
                     {
