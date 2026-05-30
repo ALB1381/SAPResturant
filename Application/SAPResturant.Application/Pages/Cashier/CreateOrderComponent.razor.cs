@@ -287,6 +287,7 @@ namespace SAPResturant.Application.Pages.Cashier
 
         private void changeSelectedTable(int tableId)
         {
+       
             currentOrder.TableId = tableId;
         }
 

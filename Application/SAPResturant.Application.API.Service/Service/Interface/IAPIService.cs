@@ -21,6 +21,6 @@ namespace SAPResturant.Application.API.Service.Service.Interface
 
 
 
-        public Task CreateNewCustomer();
+        public Task<int> CreateNewCustomer(CreateNewCustomerDTO ExDto);
     }
 }

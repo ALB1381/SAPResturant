@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SAPResturant.Application.API.Service.DTOs;
 using SAPResturant.Application.API.Service.Service.Interface;
 using SAPResturant.Inner.Data.Context;
@@ -21,9 +22,29 @@ namespace SAPResturant.Application.API.Service.Service
             _context = sAPInnerResturant;
         }
 
-        public Task CreateNewCustomer()
+        public async Task<int> CreateNewCustomer(CreateNewCustomerDTO ExDto)
         {
-            throw new NotImplementedException();
+           await using var transacton = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var newCustomer = new Customer() {
+                    Address=ExDto.CustomerAddress,CustomerName= ExDto.CustomerName,
+                    Age=ExDto.Age,CustomerPhone=ExDto.CustomerPhoneNumber,
+                    IsMan=(ExDto.Sex== "Man")?true : false,MaderLog= ExDto.Log ?? string.Empty,FirstShop= DateTime.Now
+                };
+               
+               _context.Customers.Add(newCustomer);
+                await _context.SaveChangesAsync();
+                await transacton.CommitAsync();
+                return newCustomer.CustomerId;
+
+            }
+            catch 
+            {
+                await transacton.RollbackAsync();
+                return 0;
+            }
         }
 
         public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
@@ -35,21 +56,10 @@ namespace SAPResturant.Application.API.Service.Service
             {
                 // 1. Handle Customer: Use existing or create a new one.
                 int? finalCustomerId = createNewOrderFormDTO.CustomerId;
-                if (!finalCustomerId.HasValue && string.IsNullOrEmpty(createNewOrderFormDTO.CustomerName))
+                if (!finalCustomerId.HasValue)
                 {
-                    var newCustomer = new Customer
-                    {
-                        CustomerName = createNewOrderFormDTO.CustomerName,
-                        CustomerPhone = createNewOrderFormDTO.CustomerPhoneNumber,
-                        FirstShop = DateTime.UtcNow,
-                        IsEmailActivated = false,
-                        IsPhoneNumberValidated = false,
-                        MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty,
-                        IsMan = createNewOrderFormDTO.IsMan,
-                    };
-                    _context.Customers.Add(newCustomer);
-                    await _context.SaveChangesAsync();
-                    finalCustomerId = newCustomer.CustomerId;
+                    finalCustomerId = await CreateNewCustomer(new CreateNewCustomerDTO() {CustomerName= createNewOrderFormDTO.CustomerName,CustomerPhoneNumber=createNewOrderFormDTO.CustomerPhoneNumber});
+                 
                 }
 
                 // 2. Create the Order (Inner or Outer).
