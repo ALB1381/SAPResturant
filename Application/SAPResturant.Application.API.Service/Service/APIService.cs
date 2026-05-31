@@ -143,6 +143,10 @@ namespace SAPResturant.Application.API.Service.Service
                     foreach (var sub in subInnerOrders)
                     {
                         sub.InnerOrderId = newOrder.InnerOrderId;
+                        if (sub.ExtraOnItemId==0)
+                        {
+                            sub.ExtraOnItemId = null;
+                        }
                     }
 
                     if (subInnerOrders.Any())

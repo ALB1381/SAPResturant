@@ -285,12 +285,6 @@ namespace SAPResturant.Application.Pages.Cashier
             }
         }
 
-        private void changeSelectedTable(int tableId)
-        {
-       
-            currentOrder.TableId = tableId;
-        }
-
         private void ReloadPage()
         {
             NavigationManager.NavigateTo(NavigationManager.Uri, true);
@@ -298,10 +292,18 @@ namespace SAPResturant.Application.Pages.Cashier
 
         private async Task HandleCustomerSaved(CreateNewCustomerDTO newCustomer)
         {
-            // 1. Send newCustomer to your API
-            // 2. Add them to your current order
-            // 3. Close the modal
-            showCustomerModal = false;
+            newCustomer.Log = "From-Cashier-inOrderMade";
+            var response = await client.PostAsJsonAsync("api/Customer/AddCustomer", newCustomer);
+            if (response.IsSuccessStatusCode)
+            {
+                currentOrder.SelectedCustomer = new LittleCustomerInformationDTO();
+                customerNotFound = false;
+                customerSuggestions.Clear();
+                currentOrder.SelectedCustomer = null;
+                currentOrder.CustomerPhoneNumber = newCustomer.CustomerPhoneNumber;
+                showCustomerModal = false;
+            }
+           
         }
     }
 }
