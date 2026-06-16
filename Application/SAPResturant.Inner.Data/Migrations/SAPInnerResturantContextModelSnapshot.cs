@@ -677,13 +677,13 @@ namespace SAPResturant.Inner.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubInnerOrderId"));
 
-                    b.Property<DateTime>("CookedTime")
+                    b.Property<DateTime?>("CookedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DeliveredTime")
+                    b.Property<DateTime?>("DeliveredTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ExtraOnItemId")

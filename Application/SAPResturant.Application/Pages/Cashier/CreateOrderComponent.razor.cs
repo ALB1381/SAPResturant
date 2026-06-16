@@ -296,12 +296,9 @@ namespace SAPResturant.Application.Pages.Cashier
             var response = await client.PostAsJsonAsync("api/Customer/AddCustomer", newCustomer);
             if (response.IsSuccessStatusCode)
             {
-                currentOrder.SelectedCustomer = new LittleCustomerInformationDTO();
-                customerNotFound = false;
-                customerSuggestions.Clear();
-                currentOrder.SelectedCustomer = null;
-                currentOrder.CustomerPhoneNumber = newCustomer.CustomerPhoneNumber;
+              
                 showCustomerModal = false;
+                ReloadPage();
             }
            
         }

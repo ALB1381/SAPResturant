@@ -14,9 +14,9 @@ namespace SAPResturant.Inner.Data.Entities.Orders
         public int? SumPrice { get; set; }
         public DateTime MadeDate { get; set; }
 
-        public DateTime CookedTime { get; set; }
+        public DateTime? CookedTime { get; set; }
 
-        public DateTime DeliveredTime { get; set; }
+        public DateTime? DeliveredTime { get; set; }
 
         public int? ItemCaseID { get; set; }
         [ForeignKey("ItemCaseID")]
