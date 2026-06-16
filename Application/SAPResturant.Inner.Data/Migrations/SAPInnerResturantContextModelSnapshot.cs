@@ -111,6 +111,99 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("ExtraOnItemItemConnections");
+
+                    b.HasData(
+                        new
+                        {
+                            ConnectionId = 1,
+                            ExtraOnItemId = 1,
+                            ItemId = 5,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 2,
+                            ExtraOnItemId = 1,
+                            ItemId = 4,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 3,
+                            ExtraOnItemId = 1,
+                            ItemId = 12,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 4,
+                            ExtraOnItemId = 2,
+                            ItemId = 5,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 5,
+                            ExtraOnItemId = 2,
+                            ItemId = 7,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 6,
+                            ExtraOnItemId = 2,
+                            ItemId = 10,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 7,
+                            ExtraOnItemId = 3,
+                            ItemId = 31,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 8,
+                            ExtraOnItemId = 3,
+                            ItemId = 27,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 9,
+                            ExtraOnItemId = 3,
+                            ItemId = 19,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 10,
+                            ExtraOnItemId = 4,
+                            ItemId = 31,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 11,
+                            ExtraOnItemId = 4,
+                            ItemId = 25,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 12,
+                            ExtraOnItemId = 5,
+                            ItemId = 12,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ConnectionId = 13,
+                            ExtraOnItemId = 5,
+                            ItemId = 14,
+                            MaderLog = "SystemSeed"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ExtraOnItem", b =>
@@ -141,6 +234,43 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasKey("ExtraOnItemId");
 
                     b.ToTable("ExtraOnItems");
+
+                    b.HasData(
+                        new
+                        {
+                            ExtraOnItemId = 1,
+                            ExtraOnItemPrice = 2,
+                            ExtraOnItemTitle = "Extra Espresso Shot",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ExtraOnItemId = 2,
+                            ExtraOnItemPrice = 1,
+                            ExtraOnItemTitle = "Oat Milk Alternative",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ExtraOnItemId = 3,
+                            ExtraOnItemPrice = 3,
+                            ExtraOnItemTitle = "Add Bacon",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ExtraOnItemId = 4,
+                            ExtraOnItemPrice = 2,
+                            ExtraOnItemTitle = "Extra Cheese",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ExtraOnItemId = 5,
+                            ExtraOnItemPrice = 1,
+                            ExtraOnItemTitle = "Vanilla Syrup",
+                            MaderLog = "SystemSeed"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.Item", b =>
@@ -186,6 +316,288 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("ItemSubGroupId");
 
                     b.ToTable("Items");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemId = 1,
+                            ItemGroupId = 1,
+                            ItemName = "Espresso",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 2,
+                            ItemGroupId = 1,
+                            ItemName = "Double Espresso",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 3,
+                            ItemGroupId = 1,
+                            ItemName = "Americano",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 4,
+                            ItemGroupId = 1,
+                            ItemName = "Cappuccino",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 5,
+                            ItemGroupId = 1,
+                            ItemName = "Latte",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 6,
+                            ItemGroupId = 1,
+                            ItemName = "Mocha",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 7,
+                            ItemGroupId = 1,
+                            ItemName = "Macchiato",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 8,
+                            ItemGroupId = 1,
+                            ItemName = "Flat White",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 9,
+                            ItemGroupId = 1,
+                            ItemName = "Hot Chocolate",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 10,
+                            ItemGroupId = 1,
+                            ItemName = "Chai Tea Latte",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 11,
+                            ItemGroupId = 2,
+                            ItemName = "Iced Americano",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 12,
+                            ItemGroupId = 2,
+                            ItemName = "Iced Latte",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 13,
+                            ItemGroupId = 2,
+                            ItemName = "Cold Brew",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 14,
+                            ItemGroupId = 2,
+                            ItemName = "Frappuccino",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 15,
+                            ItemGroupId = 2,
+                            ItemName = "Iced Peach Tea",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 16,
+                            ItemGroupId = 2,
+                            ItemName = "Lemonade",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 17,
+                            ItemGroupId = 2,
+                            ItemName = "Fresh Orange Juice",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 18,
+                            ItemGroupId = 2,
+                            ItemName = "Mango Smoothie",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 19,
+                            ItemGroupId = 3,
+                            ItemName = "Classic Pancakes",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 20,
+                            ItemGroupId = 3,
+                            ItemName = "Belgian Waffle",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 21,
+                            ItemGroupId = 3,
+                            ItemName = "Avocado Toast",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 22,
+                            ItemGroupId = 3,
+                            ItemName = "Eggs Benedict",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 23,
+                            ItemGroupId = 3,
+                            ItemName = "Oatmeal Bowl",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 24,
+                            ItemGroupId = 3,
+                            ItemName = "Bagel with Cream Cheese",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 25,
+                            ItemGroupId = 4,
+                            ItemName = "Club Sandwich",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 26,
+                            ItemGroupId = 4,
+                            ItemName = "BLT Sandwich",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 27,
+                            ItemGroupId = 4,
+                            ItemName = "Grilled Cheese",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 28,
+                            ItemGroupId = 4,
+                            ItemName = "Tuna Salad Sandwich",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 29,
+                            ItemGroupId = 4,
+                            ItemName = "Chicken Caesar Wrap",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 30,
+                            ItemGroupId = 4,
+                            ItemName = "Veggie Wrap",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 31,
+                            ItemGroupId = 5,
+                            ItemName = "Classic Cheeseburger",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 32,
+                            ItemGroupId = 5,
+                            ItemName = "Bacon Burger",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 33,
+                            ItemGroupId = 5,
+                            ItemName = "Mushroom Swiss Burger",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 34,
+                            ItemGroupId = 5,
+                            ItemName = "Crispy Chicken Burger",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 35,
+                            ItemGroupId = 5,
+                            ItemName = "Spicy Black Bean Burger",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 36,
+                            ItemGroupId = 6,
+                            ItemName = "New York Cheesecake",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 37,
+                            ItemGroupId = 6,
+                            ItemName = "Chocolate Fudge Cake",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 38,
+                            ItemGroupId = 6,
+                            ItemName = "Tiramisu",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 39,
+                            ItemGroupId = 6,
+                            ItemName = "Warm Brownie",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemId = 40,
+                            ItemGroupId = 6,
+                            ItemName = "Ice Cream Sundae",
+                            MaderLog = "SystemSeed"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ItemCase", b =>
@@ -225,6 +637,328 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("ItemCases");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemCaseId = 1,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 1,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 2,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 2,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 3,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 3,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 4,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 4,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 5,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 5,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 6,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 6,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 7,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 7,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 8,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 8,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 9,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 9,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 10,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 10,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 11,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 11,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 12,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 12,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 13,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 13,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 14,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 14,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 15,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 15,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 16,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 16,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 17,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 17,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 18,
+                            CasePrice = 5,
+                            CaseTitle = "Standard",
+                            ItemId = 18,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 19,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 19,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 20,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 20,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 21,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 21,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 22,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 22,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 23,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 23,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 24,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 24,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 25,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 25,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 26,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 26,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 27,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 27,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 28,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 28,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 29,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 29,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 30,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 30,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 31,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 31,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 32,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 32,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 33,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 33,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 34,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 34,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 35,
+                            CasePrice = 12,
+                            CaseTitle = "Standard",
+                            ItemId = 35,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 36,
+                            CasePrice = 7,
+                            CaseTitle = "Standard",
+                            ItemId = 36,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 37,
+                            CasePrice = 7,
+                            CaseTitle = "Standard",
+                            ItemId = 37,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 38,
+                            CasePrice = 7,
+                            CaseTitle = "Standard",
+                            ItemId = 38,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 39,
+                            CasePrice = 7,
+                            CaseTitle = "Standard",
+                            ItemId = 39,
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemCaseId = 40,
+                            CasePrice = 7,
+                            CaseTitle = "Standard",
+                            ItemId = 40,
+                            MaderLog = "SystemSeed"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ItemGroup", b =>
@@ -265,6 +999,44 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("ItemGroups");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemGroupId = 1,
+                            GroupName = "Hot Coffee",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemGroupId = 2,
+                            GroupName = "Cold Beverages",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemGroupId = 3,
+                            GroupName = "Breakfast",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemGroupId = 4,
+                            GroupName = "Sandwiches & Wraps",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemGroupId = 5,
+                            GroupName = "Burgers",
+                            MaderLog = "SystemSeed"
+                        },
+                        new
+                        {
+                            ItemGroupId = 6,
+                            GroupName = "Desserts",
+                            MaderLog = "SystemSeed"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.Discount.ItemDiscount", b =>
@@ -406,6 +1178,36 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasKey("OrderStatusId");
 
                     b.ToTable("OrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderStatusId = 1,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)10,
+                            StatusName = "Initialized"
+                        },
+                        new
+                        {
+                            OrderStatusId = 2,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)30,
+                            StatusName = "Sent to kitchen"
+                        },
+                        new
+                        {
+                            OrderStatusId = 3,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)60,
+                            StatusName = "Cooking"
+                        },
+                        new
+                        {
+                            OrderStatusId = 4,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)100,
+                            StatusName = "Delivered"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.OuterOrder", b =>
@@ -611,6 +1413,26 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("TableStatusId");
 
                     b.ToTable("Tables");
+
+                    b.HasData(
+                        new
+                        {
+                            TableId = 1,
+                            CountOfSeats = 8,
+                            MaderLog = "SystemSeed",
+                            TableDescription = "Something to describe it",
+                            TableName = "Dragon",
+                            TableNumber = 4
+                        },
+                        new
+                        {
+                            TableId = 2,
+                            CountOfSeats = 4,
+                            MaderLog = "SystemSeed",
+                            TableDescription = "Something to describe it",
+                            TableName = "Crown",
+                            TableNumber = 3
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.Space.TableReservation", b =>
@@ -667,6 +1489,26 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasKey("TableStatusId");
 
                     b.ToTable("TableStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            TableStatusId = 1,
+                            MaderLog = "SystemSeed",
+                            TableStatusName = "Free"
+                        },
+                        new
+                        {
+                            TableStatusId = 2,
+                            MaderLog = "SystemSeed",
+                            TableStatusName = "Taken"
+                        },
+                        new
+                        {
+                            TableStatusId = 3,
+                            MaderLog = "SystemSeed",
+                            TableStatusName = "Reserved"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubInnerOrder", b =>

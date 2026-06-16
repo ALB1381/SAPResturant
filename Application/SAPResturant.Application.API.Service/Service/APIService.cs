@@ -106,8 +106,6 @@ namespace SAPResturant.Application.API.Service.Service
                             SinglePrice = singlePrice,
                             SumPrice = sumPrice,
                             MadeDate = DateTime.UtcNow,
-                            CookedTime = DateTime.UtcNow,
-                            DeliveredTime = DateTime.UtcNow,
                             ItemCaseID = sd.ItemCaseId,
                             // FK will be set after parent order is created; store first extra id (if any)
                             ExtraOnItemId = sd.ExtraOnItemId?.FirstOrDefault(),
