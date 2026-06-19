@@ -312,5 +312,15 @@ namespace SAPResturant.Application.API.Service.Service
                 CustomerPhoneNumber = c.CustomerPhone
              }).ToListAsync();
         }
+
+        public async Task RemoveInnerOrderFromCashier(int OrderId)
+        {
+            var record = await _context.InnerOrders.FindAsync(OrderId);
+            if (record != null)
+            {
+                _context.InnerOrders.Remove(record);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

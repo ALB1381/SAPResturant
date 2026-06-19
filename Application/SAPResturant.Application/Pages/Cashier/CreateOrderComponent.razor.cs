@@ -287,7 +287,7 @@ namespace SAPResturant.Application.Pages.Cashier
 
         private void ReloadPage()
         {
-            NavigationManager.NavigateTo(NavigationManager.Uri, true);
+            NavigationManager.NavigateTo("/CashierDashboard", true);
         }
 
         private async Task HandleCustomerSaved(CreateNewCustomerDTO newCustomer)

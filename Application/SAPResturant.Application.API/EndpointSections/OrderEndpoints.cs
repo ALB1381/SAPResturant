@@ -11,7 +11,12 @@ namespace SAPResturant.Application.API.EndpointSections
             EndpointGroup.MapPost("/CreateNewOrderFromCashier", async (CreateNewOrderFormDTO DTo, IAPIService service) => 
             {
               await service.CreateNewOrderFromCashier(DTo);
-              return  Results.Created();
+              return Results.Created();
+            });
+            EndpointGroup.MapGet("/DeleteOrder/{OrderId}", async (int OrderId, IAPIService service) =>
+            {
+                await service.RemoveInnerOrderFromCashier(OrderId);
+                return Results.Ok();
             });
         }
     }

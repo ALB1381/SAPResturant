@@ -11,16 +11,11 @@ namespace SAPResturant.Application.API.Service.Service.Interface
     {
  
         public Task<CashierDashboardDTO> GetCashierDashboardInformationDTO();
-
         public Task<CreatNewOrderDTO> GetCreateNewOrderFromCashierPageDTO();
-
         public Task<List<LittleCustomerInformationDTO>> GetCustomerLittleInformationDTOByPhoneNumber(string phoneNumber);
-
         public Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO);
      
-
-
-
         public Task<int> CreateNewCustomer(CreateNewCustomerDTO ExDto);
+        public Task RemoveInnerOrderFromCashier(int OrderId);
     }
 }
