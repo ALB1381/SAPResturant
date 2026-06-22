@@ -304,6 +304,9 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.Property<int?>("ItemSubGroupId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ItemUnitId")
+                        .HasColumnType("int");
+
                     b.Property<string>("MaderLog")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -315,6 +318,8 @@ namespace SAPResturant.Inner.Data.Migrations
 
                     b.HasIndex("ItemSubGroupId");
 
+                    b.HasIndex("ItemUnitId");
+
                     b.ToTable("Items");
 
                     b.HasData(
@@ -323,6 +328,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 1,
                             ItemGroupId = 1,
                             ItemName = "Espresso",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -330,6 +336,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 2,
                             ItemGroupId = 1,
                             ItemName = "Double Espresso",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -337,6 +344,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 3,
                             ItemGroupId = 1,
                             ItemName = "Americano",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -344,6 +352,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 4,
                             ItemGroupId = 1,
                             ItemName = "Cappuccino",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -351,6 +360,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 5,
                             ItemGroupId = 1,
                             ItemName = "Latte",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -358,6 +368,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 6,
                             ItemGroupId = 1,
                             ItemName = "Mocha",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -365,6 +376,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 7,
                             ItemGroupId = 1,
                             ItemName = "Macchiato",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -372,6 +384,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 8,
                             ItemGroupId = 1,
                             ItemName = "Flat White",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -379,6 +392,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 9,
                             ItemGroupId = 1,
                             ItemName = "Hot Chocolate",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -386,6 +400,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 10,
                             ItemGroupId = 1,
                             ItemName = "Chai Tea Latte",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -393,6 +408,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 11,
                             ItemGroupId = 2,
                             ItemName = "Iced Americano",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -400,6 +416,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 12,
                             ItemGroupId = 2,
                             ItemName = "Iced Latte",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -407,6 +424,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 13,
                             ItemGroupId = 2,
                             ItemName = "Cold Brew",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -414,6 +432,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 14,
                             ItemGroupId = 2,
                             ItemName = "Frappuccino",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -421,6 +440,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 15,
                             ItemGroupId = 2,
                             ItemName = "Iced Peach Tea",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -428,6 +448,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 16,
                             ItemGroupId = 2,
                             ItemName = "Lemonade",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -435,6 +456,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 17,
                             ItemGroupId = 2,
                             ItemName = "Fresh Orange Juice",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -442,6 +464,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 18,
                             ItemGroupId = 2,
                             ItemName = "Mango Smoothie",
+                            ItemUnitId = 1,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -449,6 +472,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 19,
                             ItemGroupId = 3,
                             ItemName = "Classic Pancakes",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -456,6 +480,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 20,
                             ItemGroupId = 3,
                             ItemName = "Belgian Waffle",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -463,6 +488,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 21,
                             ItemGroupId = 3,
                             ItemName = "Avocado Toast",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -470,6 +496,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 22,
                             ItemGroupId = 3,
                             ItemName = "Eggs Benedict",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -477,6 +504,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 23,
                             ItemGroupId = 3,
                             ItemName = "Oatmeal Bowl",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -484,6 +512,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 24,
                             ItemGroupId = 3,
                             ItemName = "Bagel with Cream Cheese",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -491,6 +520,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 25,
                             ItemGroupId = 4,
                             ItemName = "Club Sandwich",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -498,6 +528,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 26,
                             ItemGroupId = 4,
                             ItemName = "BLT Sandwich",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -505,6 +536,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 27,
                             ItemGroupId = 4,
                             ItemName = "Grilled Cheese",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -512,6 +544,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 28,
                             ItemGroupId = 4,
                             ItemName = "Tuna Salad Sandwich",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -519,6 +552,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 29,
                             ItemGroupId = 4,
                             ItemName = "Chicken Caesar Wrap",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -526,6 +560,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 30,
                             ItemGroupId = 4,
                             ItemName = "Veggie Wrap",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -533,6 +568,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 31,
                             ItemGroupId = 5,
                             ItemName = "Classic Cheeseburger",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -540,6 +576,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 32,
                             ItemGroupId = 5,
                             ItemName = "Bacon Burger",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -547,6 +584,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 33,
                             ItemGroupId = 5,
                             ItemName = "Mushroom Swiss Burger",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -554,6 +592,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 34,
                             ItemGroupId = 5,
                             ItemName = "Crispy Chicken Burger",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -561,6 +600,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 35,
                             ItemGroupId = 5,
                             ItemName = "Spicy Black Bean Burger",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -568,6 +608,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 36,
                             ItemGroupId = 6,
                             ItemName = "New York Cheesecake",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -575,6 +616,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 37,
                             ItemGroupId = 6,
                             ItemName = "Chocolate Fudge Cake",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -582,6 +624,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 38,
                             ItemGroupId = 6,
                             ItemName = "Tiramisu",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -589,6 +632,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 39,
                             ItemGroupId = 6,
                             ItemName = "Warm Brownie",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         },
                         new
@@ -596,6 +640,7 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemId = 40,
                             ItemGroupId = 6,
                             ItemName = "Ice Cream Sundae",
+                            ItemUnitId = 2,
                             MaderLog = "SystemSeed"
                         });
                 });
@@ -1036,6 +1081,36 @@ namespace SAPResturant.Inner.Data.Migrations
                             ItemGroupId = 6,
                             GroupName = "Desserts",
                             MaderLog = "SystemSeed"
+                        });
+                });
+
+            modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ItemUnit", b =>
+                {
+                    b.Property<int>("ItemUnitId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemUnitId"));
+
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("ItemUnitId");
+
+                    b.ToTable("ItemUnits");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemUnitId = 1,
+                            UnitName = "Cafe"
+                        },
+                        new
+                        {
+                            ItemUnitId = 2,
+                            UnitName = "Kitchen"
                         });
                 });
 
@@ -2136,9 +2211,17 @@ namespace SAPResturant.Inner.Data.Migrations
                         .WithMany("SubItems")
                         .HasForeignKey("ItemSubGroupId");
 
+                    b.HasOne("SAPResturant.Inner.Data.Entities.Menus.ItemUnit", "ItemUnit")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ItemGroup");
 
                     b.Navigation("ItemSubGroup");
+
+                    b.Navigation("ItemUnit");
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ItemCase", b =>
@@ -2502,6 +2585,11 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("SubItems");
+                });
+
+            modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Menus.ItemUnit", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.Discount.ItemDiscount", b =>

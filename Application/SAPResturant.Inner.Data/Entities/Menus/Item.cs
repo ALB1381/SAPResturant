@@ -19,11 +19,16 @@ namespace SAPResturant.Inner.Data.Entities.Menus
         [MaxLength(300)]
         public string? ItemIngrediants { get; set; }
 
+        public int ItemUnitId { get; set; }
+
         [MaxLength(100)]
         public string? ItemImage { get; set; }
         #endregion
 
+
         #region Rel
+        [ForeignKey("ItemUnitId")]
+        public ItemUnit ItemUnit { get; set; }
         public int ItemGroupId { get; set; }
         [ForeignKey("ItemGroupId")]
         public ItemGroup ItemGroup { get; set; }

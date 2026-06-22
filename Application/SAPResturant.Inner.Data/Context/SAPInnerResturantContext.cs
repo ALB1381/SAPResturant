@@ -9,6 +9,7 @@ using SAPResturant.Inner.Data.Entities.Orders.Space.Connection;
 using SAPResturant.Inner.Data.Entities.Users;
 using SAPResturant.Inner.Data.Entities.Warehouse;
 using SAPResturant.Inner.Data.Entities.Warehouse.Connection;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace SAPResturant.Inner.Data.Context
 {
@@ -53,19 +54,21 @@ namespace SAPResturant.Inner.Data.Context
         public DbSet<Supplied> Supplieds { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        public DbSet<ItemUnit> ItemUnits { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); // Always good practice to call the base method
 
             string log = "SystemSeed";
             modelBuilder.Entity<Table>().HasData(
-                new Table() {CountOfSeats = 8, MaderLog = log, TableDescription ="Something to describe it",TableId = 1,TableName= "Dragon",TableNumber=4},
-                new Table() {CountOfSeats = 4, MaderLog = log, TableDescription ="Something to describe it",TableId = 2,TableName= "Crown",TableNumber=3}
+                new Table() { CountOfSeats = 8, MaderLog = log, TableDescription = "Something to describe it", TableId = 1, TableName = "Dragon", TableNumber = 4 },
+                new Table() { CountOfSeats = 4, MaderLog = log, TableDescription = "Something to describe it", TableId = 2, TableName = "Crown", TableNumber = 3 }
                 );
             modelBuilder.Entity<TableStatus>().HasData(
-                new TableStatus() {MaderLog=log,TableStatusId=1,TableStatusName="Free"},
-                new TableStatus() {MaderLog=log,TableStatusId=2,TableStatusName="Taken"},
-                new TableStatus() {MaderLog=log,TableStatusId=3,TableStatusName="Reserved"}
+                new TableStatus() { MaderLog = log, TableStatusId = 1, TableStatusName = "Free" },
+                new TableStatus() { MaderLog = log, TableStatusId = 2, TableStatusName = "Taken" },
+                new TableStatus() { MaderLog = log, TableStatusId = 3, TableStatusName = "Reserved" }
                 );
 
             // 1. Seed Item Groups
@@ -78,65 +81,60 @@ namespace SAPResturant.Inner.Data.Context
                 new ItemGroup { ItemGroupId = 6, GroupName = "Desserts", MaderLog = log }
             );
             modelBuilder.Entity<OrderStatus>().HasData(
-                new OrderStatus() {MaderLog=log,OrderStatusId=1,StatusName="Initialized",Percent=10 },
-                new OrderStatus() {MaderLog=log,OrderStatusId=2,StatusName= "Sent to kitchen", Percent=30 },
-                new OrderStatus() {MaderLog=log,OrderStatusId=3,StatusName="Cooking",Percent=60 },
-                new OrderStatus() {MaderLog=log,OrderStatusId=4,StatusName="Delivered",Percent=100 }
+                new OrderStatus() { MaderLog = log, OrderStatusId = 1, StatusName = "Initialized", Percent = 10 },
+                new OrderStatus() { MaderLog = log, OrderStatusId = 2, StatusName = "Sent to kitchen", Percent = 30 },
+                new OrderStatus() { MaderLog = log, OrderStatusId = 3, StatusName = "Cooking", Percent = 60 },
+                new OrderStatus() { MaderLog = log, OrderStatusId = 4, StatusName = "Delivered", Percent = 100 }
                 );
-            // 2. Seed 40 Items
+           
             modelBuilder.Entity<Item>().HasData(
-                // Hot Coffee
-                new Item { ItemId = 1, ItemName = "Espresso", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 2, ItemName = "Double Espresso", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 3, ItemName = "Americano", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 4, ItemName = "Cappuccino", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 5, ItemName = "Latte", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 6, ItemName = "Mocha", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 7, ItemName = "Macchiato", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 8, ItemName = "Flat White", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 9, ItemName = "Hot Chocolate", ItemGroupId = 1, MaderLog = log },
-                new Item { ItemId = 10, ItemName = "Chai Tea Latte", ItemGroupId = 1, MaderLog = log },
 
-                // Cold Beverages
-                new Item { ItemId = 11, ItemName = "Iced Americano", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 12, ItemName = "Iced Latte", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 13, ItemName = "Cold Brew", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 14, ItemName = "Frappuccino", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 15, ItemName = "Iced Peach Tea", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 16, ItemName = "Lemonade", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 17, ItemName = "Fresh Orange Juice", ItemGroupId = 2, MaderLog = log },
-                new Item { ItemId = 18, ItemName = "Mango Smoothie", ItemGroupId = 2, MaderLog = log },
+      new Item { ItemId = 1, ItemName = "Espresso", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 2, ItemName = "Double Espresso", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 3, ItemName = "Americano", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 4, ItemName = "Cappuccino", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 5, ItemName = "Latte", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 6, ItemName = "Mocha", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 7, ItemName = "Macchiato", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 8, ItemName = "Flat White", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 9, ItemName = "Hot Chocolate", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 10, ItemName = "Chai Tea Latte", ItemGroupId = 1, ItemUnitId = 1, MaderLog = log },
 
-                // Breakfast
-                new Item { ItemId = 19, ItemName = "Classic Pancakes", ItemGroupId = 3, MaderLog = log },
-                new Item { ItemId = 20, ItemName = "Belgian Waffle", ItemGroupId = 3, MaderLog = log },
-                new Item { ItemId = 21, ItemName = "Avocado Toast", ItemGroupId = 3, MaderLog = log },
-                new Item { ItemId = 22, ItemName = "Eggs Benedict", ItemGroupId = 3, MaderLog = log },
-                new Item { ItemId = 23, ItemName = "Oatmeal Bowl", ItemGroupId = 3, MaderLog = log },
-                new Item { ItemId = 24, ItemName = "Bagel with Cream Cheese", ItemGroupId = 3, MaderLog = log },
+      new Item { ItemId = 11, ItemName = "Iced Americano", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 12, ItemName = "Iced Latte", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 13, ItemName = "Cold Brew", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 14, ItemName = "Frappuccino", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 15, ItemName = "Iced Peach Tea", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 16, ItemName = "Lemonade", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 17, ItemName = "Fresh Orange Juice", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
+      new Item { ItemId = 18, ItemName = "Mango Smoothie", ItemGroupId = 2, ItemUnitId = 1, MaderLog = log },
 
-                // Sandwiches & Wraps
-                new Item { ItemId = 25, ItemName = "Club Sandwich", ItemGroupId = 4, MaderLog = log },
-                new Item { ItemId = 26, ItemName = "BLT Sandwich", ItemGroupId = 4, MaderLog = log },
-                new Item { ItemId = 27, ItemName = "Grilled Cheese", ItemGroupId = 4, MaderLog = log },
-                new Item { ItemId = 28, ItemName = "Tuna Salad Sandwich", ItemGroupId = 4, MaderLog = log },
-                new Item { ItemId = 29, ItemName = "Chicken Caesar Wrap", ItemGroupId = 4, MaderLog = log },
-                new Item { ItemId = 30, ItemName = "Veggie Wrap", ItemGroupId = 4, MaderLog = log },
+      new Item { ItemId = 19, ItemName = "Classic Pancakes", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 20, ItemName = "Belgian Waffle", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 21, ItemName = "Avocado Toast", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 22, ItemName = "Eggs Benedict", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 23, ItemName = "Oatmeal Bowl", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 24, ItemName = "Bagel with Cream Cheese", ItemGroupId = 3, ItemUnitId = 2, MaderLog = log },
 
-                // Burgers
-                new Item { ItemId = 31, ItemName = "Classic Cheeseburger", ItemGroupId = 5, MaderLog = log },
-                new Item { ItemId = 32, ItemName = "Bacon Burger", ItemGroupId = 5, MaderLog = log },
-                new Item { ItemId = 33, ItemName = "Mushroom Swiss Burger", ItemGroupId = 5, MaderLog = log },
-                new Item { ItemId = 34, ItemName = "Crispy Chicken Burger", ItemGroupId = 5, MaderLog = log },
-                new Item { ItemId = 35, ItemName = "Spicy Black Bean Burger", ItemGroupId = 5, MaderLog = log },
+      new Item { ItemId = 25, ItemName = "Club Sandwich", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 26, ItemName = "BLT Sandwich", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 27, ItemName = "Grilled Cheese", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 28, ItemName = "Tuna Salad Sandwich", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 29, ItemName = "Chicken Caesar Wrap", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 30, ItemName = "Veggie Wrap", ItemGroupId = 4, ItemUnitId = 2, MaderLog = log },
 
-                // Desserts
-                new Item { ItemId = 36, ItemName = "New York Cheesecake", ItemGroupId = 6, MaderLog = log },
-                new Item { ItemId = 37, ItemName = "Chocolate Fudge Cake", ItemGroupId = 6, MaderLog = log },
-                new Item { ItemId = 38, ItemName = "Tiramisu", ItemGroupId = 6, MaderLog = log },
-                new Item { ItemId = 39, ItemName = "Warm Brownie", ItemGroupId = 6, MaderLog = log },
-                new Item { ItemId = 40, ItemName = "Ice Cream Sundae", ItemGroupId = 6, MaderLog = log }
-            );
+      new Item { ItemId = 31, ItemName = "Classic Cheeseburger", ItemGroupId = 5, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 32, ItemName = "Bacon Burger", ItemGroupId = 5, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 33, ItemName = "Mushroom Swiss Burger", ItemGroupId = 5, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 34, ItemName = "Crispy Chicken Burger", ItemGroupId = 5, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 35, ItemName = "Spicy Black Bean Burger", ItemGroupId = 5, ItemUnitId = 2, MaderLog = log },
+
+      new Item { ItemId = 36, ItemName = "New York Cheesecake", ItemGroupId = 6, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 37, ItemName = "Chocolate Fudge Cake", ItemGroupId = 6, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 38, ItemName = "Tiramisu", ItemGroupId = 6, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 39, ItemName = "Warm Brownie", ItemGroupId = 6, ItemUnitId = 2, MaderLog = log },
+      new Item { ItemId = 40, ItemName = "Ice Cream Sundae", ItemGroupId = 6, ItemUnitId = 2, MaderLog = log }
+  );
 
             // 3. Seed Item Cases (Prices for the items)
             var itemCases = new List<ItemCase>();
@@ -188,6 +186,12 @@ namespace SAPResturant.Inner.Data.Context
                 new ExtraOnItemItemConnection { ConnectionId = 12, ItemId = 12, ExtraOnItemId = 5, MaderLog = log },
                 new ExtraOnItemItemConnection { ConnectionId = 13, ItemId = 14, ExtraOnItemId = 5, MaderLog = log }
             );
+
+            modelBuilder.Entity<ItemUnit>().HasData(
+                new ItemUnit() { ItemUnitId = 1, UnitName = "Cafe" },
+                new ItemUnit() { ItemUnitId = 2, UnitName = "Kitchen" }
+                );
+
         }
     }
 }

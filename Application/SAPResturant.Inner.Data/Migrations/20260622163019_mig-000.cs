@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace SAPResturant.Inner.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Mig000 : Migration
+    public partial class mig000 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,6 +138,19 @@ namespace SAPResturant.Inner.Data.Migrations
                         column: x => x.ParentId,
                         principalTable: "ItemGroups",
                         principalColumn: "ItemGroupId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemUnits",
+                columns: table => new
+                {
+                    ItemUnitId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UnitName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemUnits", x => x.ItemUnitId);
                 });
 
             migrationBuilder.CreateTable(
@@ -288,6 +303,7 @@ namespace SAPResturant.Inner.Data.Migrations
                     ItemName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ItemDescription = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     ItemIngrediants = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    ItemUnitId = table.Column<int>(type: "int", nullable: false),
                     ItemImage = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ItemGroupId = table.Column<int>(type: "int", nullable: false),
                     ItemSubGroupId = table.Column<int>(type: "int", nullable: true),
@@ -307,6 +323,12 @@ namespace SAPResturant.Inner.Data.Migrations
                         column: x => x.ItemSubGroupId,
                         principalTable: "ItemGroups",
                         principalColumn: "ItemGroupId");
+                    table.ForeignKey(
+                        name: "FK_Items_ItemUnits_ItemUnitId",
+                        column: x => x.ItemUnitId,
+                        principalTable: "ItemUnits",
+                        principalColumn: "ItemUnitId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -844,6 +866,184 @@ namespace SAPResturant.Inner.Data.Migrations
                         principalColumn: "ResevationId");
                 });
 
+            migrationBuilder.InsertData(
+                table: "ExtraOnItems",
+                columns: new[] { "ExtraOnItemId", "ExtraOnItemDescription", "ExtraOnItemPrice", "ExtraOnItemTitle", "MaderLog" },
+                values: new object[,]
+                {
+                    { 1, null, 2, "Extra Espresso Shot", "SystemSeed" },
+                    { 2, null, 1, "Oat Milk Alternative", "SystemSeed" },
+                    { 3, null, 3, "Add Bacon", "SystemSeed" },
+                    { 4, null, 2, "Extra Cheese", "SystemSeed" },
+                    { 5, null, 1, "Vanilla Syrup", "SystemSeed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemGroups",
+                columns: new[] { "ItemGroupId", "GroupBgColor", "GroupCardColors", "GroupName", "GroupTextColor", "MaderLog", "ParentId" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Hot Coffee", null, "SystemSeed", null },
+                    { 2, null, null, "Cold Beverages", null, "SystemSeed", null },
+                    { 3, null, null, "Breakfast", null, "SystemSeed", null },
+                    { 4, null, null, "Sandwiches & Wraps", null, "SystemSeed", null },
+                    { 5, null, null, "Burgers", null, "SystemSeed", null },
+                    { 6, null, null, "Desserts", null, "SystemSeed", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemUnits",
+                columns: new[] { "ItemUnitId", "UnitName" },
+                values: new object[,]
+                {
+                    { 1, "Cafe" },
+                    { 2, "Kitchen" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "OrderStatuses",
+                columns: new[] { "OrderStatusId", "MaderLog", "Percent", "StatusName" },
+                values: new object[,]
+                {
+                    { 1, "SystemSeed", (short)10, "Initialized" },
+                    { 2, "SystemSeed", (short)30, "Sent to kitchen" },
+                    { 3, "SystemSeed", (short)60, "Cooking" },
+                    { 4, "SystemSeed", (short)100, "Delivered" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TableStatuses",
+                columns: new[] { "TableStatusId", "MaderLog", "TableStatusName" },
+                values: new object[,]
+                {
+                    { 1, "SystemSeed", "Free" },
+                    { 2, "SystemSeed", "Taken" },
+                    { 3, "SystemSeed", "Reserved" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tables",
+                columns: new[] { "TableId", "CountOfSeats", "MaderLog", "PeriodHourOfReservation", "PriceOfReservation", "ResturantSectionId", "TableDescription", "TableName", "TableNumber", "TableStatusId" },
+                values: new object[,]
+                {
+                    { 1, 8, "SystemSeed", null, null, null, "Something to describe it", "Dragon", 4, null },
+                    { 2, 4, "SystemSeed", null, null, null, "Something to describe it", "Crown", 3, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Items",
+                columns: new[] { "ItemId", "ItemDescription", "ItemGroupId", "ItemImage", "ItemIngrediants", "ItemName", "ItemSubGroupId", "ItemUnitId", "MaderLog" },
+                values: new object[,]
+                {
+                    { 1, null, 1, null, null, "Espresso", null, 1, "SystemSeed" },
+                    { 2, null, 1, null, null, "Double Espresso", null, 1, "SystemSeed" },
+                    { 3, null, 1, null, null, "Americano", null, 1, "SystemSeed" },
+                    { 4, null, 1, null, null, "Cappuccino", null, 1, "SystemSeed" },
+                    { 5, null, 1, null, null, "Latte", null, 1, "SystemSeed" },
+                    { 6, null, 1, null, null, "Mocha", null, 1, "SystemSeed" },
+                    { 7, null, 1, null, null, "Macchiato", null, 1, "SystemSeed" },
+                    { 8, null, 1, null, null, "Flat White", null, 1, "SystemSeed" },
+                    { 9, null, 1, null, null, "Hot Chocolate", null, 1, "SystemSeed" },
+                    { 10, null, 1, null, null, "Chai Tea Latte", null, 1, "SystemSeed" },
+                    { 11, null, 2, null, null, "Iced Americano", null, 1, "SystemSeed" },
+                    { 12, null, 2, null, null, "Iced Latte", null, 1, "SystemSeed" },
+                    { 13, null, 2, null, null, "Cold Brew", null, 1, "SystemSeed" },
+                    { 14, null, 2, null, null, "Frappuccino", null, 1, "SystemSeed" },
+                    { 15, null, 2, null, null, "Iced Peach Tea", null, 1, "SystemSeed" },
+                    { 16, null, 2, null, null, "Lemonade", null, 1, "SystemSeed" },
+                    { 17, null, 2, null, null, "Fresh Orange Juice", null, 1, "SystemSeed" },
+                    { 18, null, 2, null, null, "Mango Smoothie", null, 1, "SystemSeed" },
+                    { 19, null, 3, null, null, "Classic Pancakes", null, 2, "SystemSeed" },
+                    { 20, null, 3, null, null, "Belgian Waffle", null, 2, "SystemSeed" },
+                    { 21, null, 3, null, null, "Avocado Toast", null, 2, "SystemSeed" },
+                    { 22, null, 3, null, null, "Eggs Benedict", null, 2, "SystemSeed" },
+                    { 23, null, 3, null, null, "Oatmeal Bowl", null, 2, "SystemSeed" },
+                    { 24, null, 3, null, null, "Bagel with Cream Cheese", null, 2, "SystemSeed" },
+                    { 25, null, 4, null, null, "Club Sandwich", null, 2, "SystemSeed" },
+                    { 26, null, 4, null, null, "BLT Sandwich", null, 2, "SystemSeed" },
+                    { 27, null, 4, null, null, "Grilled Cheese", null, 2, "SystemSeed" },
+                    { 28, null, 4, null, null, "Tuna Salad Sandwich", null, 2, "SystemSeed" },
+                    { 29, null, 4, null, null, "Chicken Caesar Wrap", null, 2, "SystemSeed" },
+                    { 30, null, 4, null, null, "Veggie Wrap", null, 2, "SystemSeed" },
+                    { 31, null, 5, null, null, "Classic Cheeseburger", null, 2, "SystemSeed" },
+                    { 32, null, 5, null, null, "Bacon Burger", null, 2, "SystemSeed" },
+                    { 33, null, 5, null, null, "Mushroom Swiss Burger", null, 2, "SystemSeed" },
+                    { 34, null, 5, null, null, "Crispy Chicken Burger", null, 2, "SystemSeed" },
+                    { 35, null, 5, null, null, "Spicy Black Bean Burger", null, 2, "SystemSeed" },
+                    { 36, null, 6, null, null, "New York Cheesecake", null, 2, "SystemSeed" },
+                    { 37, null, 6, null, null, "Chocolate Fudge Cake", null, 2, "SystemSeed" },
+                    { 38, null, 6, null, null, "Tiramisu", null, 2, "SystemSeed" },
+                    { 39, null, 6, null, null, "Warm Brownie", null, 2, "SystemSeed" },
+                    { 40, null, 6, null, null, "Ice Cream Sundae", null, 2, "SystemSeed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ExtraOnItemItemConnections",
+                columns: new[] { "ConnectionId", "ExtraOnItemId", "ItemId", "MaderLog" },
+                values: new object[,]
+                {
+                    { 1, 1, 5, "SystemSeed" },
+                    { 2, 1, 4, "SystemSeed" },
+                    { 3, 1, 12, "SystemSeed" },
+                    { 4, 2, 5, "SystemSeed" },
+                    { 5, 2, 7, "SystemSeed" },
+                    { 6, 2, 10, "SystemSeed" },
+                    { 7, 3, 31, "SystemSeed" },
+                    { 8, 3, 27, "SystemSeed" },
+                    { 9, 3, 19, "SystemSeed" },
+                    { 10, 4, 31, "SystemSeed" },
+                    { 11, 4, 25, "SystemSeed" },
+                    { 12, 5, 12, "SystemSeed" },
+                    { 13, 5, 14, "SystemSeed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemCases",
+                columns: new[] { "ItemCaseId", "AvaibleCount", "CasePrice", "CaseTitle", "DsicountId", "ItemId", "MaderLog" },
+                values: new object[,]
+                {
+                    { 1, null, 5, "Standard", null, 1, "SystemSeed" },
+                    { 2, null, 5, "Standard", null, 2, "SystemSeed" },
+                    { 3, null, 5, "Standard", null, 3, "SystemSeed" },
+                    { 4, null, 5, "Standard", null, 4, "SystemSeed" },
+                    { 5, null, 5, "Standard", null, 5, "SystemSeed" },
+                    { 6, null, 5, "Standard", null, 6, "SystemSeed" },
+                    { 7, null, 5, "Standard", null, 7, "SystemSeed" },
+                    { 8, null, 5, "Standard", null, 8, "SystemSeed" },
+                    { 9, null, 5, "Standard", null, 9, "SystemSeed" },
+                    { 10, null, 5, "Standard", null, 10, "SystemSeed" },
+                    { 11, null, 5, "Standard", null, 11, "SystemSeed" },
+                    { 12, null, 5, "Standard", null, 12, "SystemSeed" },
+                    { 13, null, 5, "Standard", null, 13, "SystemSeed" },
+                    { 14, null, 5, "Standard", null, 14, "SystemSeed" },
+                    { 15, null, 5, "Standard", null, 15, "SystemSeed" },
+                    { 16, null, 5, "Standard", null, 16, "SystemSeed" },
+                    { 17, null, 5, "Standard", null, 17, "SystemSeed" },
+                    { 18, null, 5, "Standard", null, 18, "SystemSeed" },
+                    { 19, null, 12, "Standard", null, 19, "SystemSeed" },
+                    { 20, null, 12, "Standard", null, 20, "SystemSeed" },
+                    { 21, null, 12, "Standard", null, 21, "SystemSeed" },
+                    { 22, null, 12, "Standard", null, 22, "SystemSeed" },
+                    { 23, null, 12, "Standard", null, 23, "SystemSeed" },
+                    { 24, null, 12, "Standard", null, 24, "SystemSeed" },
+                    { 25, null, 12, "Standard", null, 25, "SystemSeed" },
+                    { 26, null, 12, "Standard", null, 26, "SystemSeed" },
+                    { 27, null, 12, "Standard", null, 27, "SystemSeed" },
+                    { 28, null, 12, "Standard", null, 28, "SystemSeed" },
+                    { 29, null, 12, "Standard", null, 29, "SystemSeed" },
+                    { 30, null, 12, "Standard", null, 30, "SystemSeed" },
+                    { 31, null, 12, "Standard", null, 31, "SystemSeed" },
+                    { 32, null, 12, "Standard", null, 32, "SystemSeed" },
+                    { 33, null, 12, "Standard", null, 33, "SystemSeed" },
+                    { 34, null, 12, "Standard", null, 34, "SystemSeed" },
+                    { 35, null, 12, "Standard", null, 35, "SystemSeed" },
+                    { 36, null, 7, "Standard", null, 36, "SystemSeed" },
+                    { 37, null, 7, "Standard", null, 37, "SystemSeed" },
+                    { 38, null, 7, "Standard", null, 38, "SystemSeed" },
+                    { 39, null, 7, "Standard", null, 39, "SystemSeed" },
+                    { 40, null, 7, "Standard", null, 40, "SystemSeed" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Exiteds_InventoryId",
                 table: "Exiteds",
@@ -928,6 +1128,11 @@ namespace SAPResturant.Inner.Data.Migrations
                 name: "IX_Items_ItemSubGroupId",
                 table: "Items",
                 column: "ItemSubGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_ItemUnitId",
+                table: "Items",
+                column: "ItemUnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OuterOrders_CustomerId",
@@ -1150,6 +1355,9 @@ namespace SAPResturant.Inner.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "ItemGroups");
+
+            migrationBuilder.DropTable(
+                name: "ItemUnits");
 
             migrationBuilder.DropTable(
                 name: "ResturanSections");
