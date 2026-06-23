@@ -24,23 +24,28 @@ namespace SAPResturant.Application.API.Service.Service
 
         public async Task<int> CreateNewCustomer(CreateNewCustomerDTO ExDto)
         {
-           await using var transacton = await _context.Database.BeginTransactionAsync();
+            await using var transacton = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var newCustomer = new Customer() {
-                    Address=ExDto.CustomerAddress,CustomerName= ExDto.CustomerName,
-                    Age=ExDto.Age,CustomerPhone=ExDto.CustomerPhoneNumber,
-                    IsMan=(ExDto.Sex== "Man")?true : false,MaderLog= ExDto.Log ?? string.Empty,FirstShop= DateTime.Now
+                var newCustomer = new Customer()
+                {
+                    Address = ExDto.CustomerAddress,
+                    CustomerName = ExDto.CustomerName,
+                    Age = ExDto.Age,
+                    CustomerPhone = ExDto.CustomerPhoneNumber,
+                    IsMan = (ExDto.Sex == "Man") ? true : false,
+                    MaderLog = ExDto.Log ?? string.Empty,
+                    FirstShop = DateTime.Now
                 };
-               
-               _context.Customers.Add(newCustomer);
+
+                _context.Customers.Add(newCustomer);
                 await _context.SaveChangesAsync();
                 await transacton.CommitAsync();
                 return newCustomer.CustomerId;
 
             }
-            catch 
+            catch
             {
                 await transacton.RollbackAsync();
                 return 0;
@@ -58,8 +63,8 @@ namespace SAPResturant.Application.API.Service.Service
                 int? finalCustomerId = createNewOrderFormDTO.CustomerId;
                 if (!finalCustomerId.HasValue)
                 {
-                    finalCustomerId = await CreateNewCustomer(new CreateNewCustomerDTO() {CustomerName= createNewOrderFormDTO.CustomerName,CustomerPhoneNumber=createNewOrderFormDTO.CustomerPhoneNumber});
-                 
+                    finalCustomerId = await CreateNewCustomer(new CreateNewCustomerDTO() { CustomerName = createNewOrderFormDTO.CustomerName, CustomerPhoneNumber = createNewOrderFormDTO.CustomerPhoneNumber });
+
                 }
 
                 // 2. Create the Order (Inner or Outer).
@@ -141,7 +146,7 @@ namespace SAPResturant.Application.API.Service.Service
                     foreach (var sub in subInnerOrders)
                     {
                         sub.InnerOrderId = newOrder.InnerOrderId;
-                        if (sub.ExtraOnItemId==0)
+                        if (sub.ExtraOnItemId == 0)
                         {
                             sub.ExtraOnItemId = null;
                         }
@@ -211,7 +216,7 @@ namespace SAPResturant.Application.API.Service.Service
 
             return dashboardDto;
         }
-       
+
 
 
 
@@ -305,12 +310,78 @@ namespace SAPResturant.Application.API.Service.Service
 
         public async Task<List<LittleCustomerInformationDTO>> GetCustomerLittleInformationDTOByPhoneNumber(string phoneNumber)
         {
-            return await _context.Customers.AsNoTracking().Where(c => c.CustomerPhone.Contains(phoneNumber)).Select(c=>new LittleCustomerInformationDTO()
-            { 
+            return await _context.Customers.AsNoTracking().Where(c => c.CustomerPhone.Contains(phoneNumber)).Select(c => new LittleCustomerInformationDTO()
+            {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
                 CustomerPhoneNumber = c.CustomerPhone
-             }).ToListAsync();
+            }).ToListAsync();
+        }
+
+        public async Task<List<KitchenDashboardDTO>> GetKitchenDashboardDTOs()
+        {
+            var sql = @"
+        -- Result Set 1: Active Kitchen Orders
+        SELECT DISTINCT 
+            o.InnerOrderId AS OrderId,
+            ISNULL(t.TableName, 'Takeout/No Table') AS TableName,
+            ISNULL(o.TableId, 0) AS TableId,
+            o.OrderDate AS OrderTime,
+            os.StatusName AS Status,
+            o.OrderDescription AS KitchenNotes
+        FROM dbo.InnerOrders o
+        LEFT JOIN dbo.Tables t ON o.TableId = t.TableId
+        LEFT JOIN dbo.OrderStatuses os ON o.OrderStatusId = os.OrderStatusId
+        INNER JOIN dbo.SubInnerOrders sio ON o.InnerOrderId = sio.InnerOrderId
+        INNER JOIN dbo.ItemCases ic ON sio.ItemCaseID = ic.ItemCaseId
+        INNER JOIN dbo.Items i ON ic.ItemId = i.ItemId
+        WHERE o.OrderStatusId IN (1, 2, 3) -- Initialized, Sent to kitchen, Cooking
+          AND i.ItemUnitId = 2 -- KITCHEN ONLY (Ignores Cafe drinks)
+        ORDER BY o.OrderDate ASC;
+
+        -- Result Set 2: The Items inside those active orders
+        SELECT 
+            sio.InnerOrderId AS OrderId,
+            i.ItemId,
+            i.ItemName,
+            sio.Count AS Quantity,
+            e.ExtraOnItemTitle AS Notes,
+            'Pending' AS Status
+        FROM dbo.SubInnerOrders sio
+        INNER JOIN dbo.InnerOrders o ON sio.InnerOrderId = o.InnerOrderId
+        INNER JOIN dbo.ItemCases ic ON sio.ItemCaseID = ic.ItemCaseId
+        INNER JOIN dbo.Items i ON ic.ItemId = i.ItemId
+        LEFT JOIN dbo.ExtraOnItems e ON sio.ExtraOnItemId = e.ExtraOnItemId
+        WHERE o.OrderStatusId IN (1, 2, 3)
+          AND i.ItemUnitId = 2; -- KITCHEN ONLY
+    ";
+
+            var db = _context.Database.GetDbConnection();
+            using (var multi = await db.QueryMultipleAsync(sql))
+            {
+
+                var orders = (await multi.ReadAsync<KitchenDashboardDTO>()).ToList();
+
+
+                var allItems = await multi.ReadAsync<dynamic>();
+
+
+                foreach (var order in orders)
+                {
+                    order.Items = allItems
+                        .Where(x => x.OrderId == order.OrderId)
+                        .Select(x => new KitchenOrderItemDTO
+                        {
+                            ItemId = x.ItemId,
+                            ItemName = x.ItemName,
+                            Quantity = x.Quantity,
+                            Notes = x.Notes,
+                            Status = x.Status
+                        }).ToList();
+                }
+
+                return orders;
+            }
         }
 
         public async Task RemoveInnerOrderFromCashier(int OrderId)

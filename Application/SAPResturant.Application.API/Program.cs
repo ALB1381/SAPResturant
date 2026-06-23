@@ -41,6 +41,7 @@ app.UseCors("AllowBlazorApp");
 app.MapCashierEndpointApi();
 app.MapCustomerEndpointApi();
 app.MapOrderEndpointApi();
+app.MapKitchenEndPointAPI();
 app.MapGet("/", () => "Hello");
 
 app.Run();

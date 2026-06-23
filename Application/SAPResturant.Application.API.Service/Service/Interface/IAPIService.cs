@@ -17,5 +17,7 @@ namespace SAPResturant.Application.API.Service.Service.Interface
      
         public Task<int> CreateNewCustomer(CreateNewCustomerDTO ExDto);
         public Task RemoveInnerOrderFromCashier(int OrderId);
+
+        public Task<List<KitchenDashboardDTO>> GetKitchenDashboardDTOs();
     }
 }

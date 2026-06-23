@@ -1,0 +1,84 @@
+﻿@using SAPResturant.Application.DTOs
+
+<div class="glass-card bg-white shadow-md rounded-2xl overflow-hidden flex flex-col transition-all">
+    <div class="@HeaderColorClass p-3 flex justify-between items-start text-white">
+        <div>
+            <h3 class="text-lg font-bold">@Order.TableName</h3>
+            <p class="text-xs opacity-80">Order #@Order.OrderId</p>
+        </div>
+        <div class="text-right">
+            <span class="font-bold text-lg">@TimeElapsed</span>
+            <p class="text-xs opacity-80">min ago</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Order.KitchenNotes))
+    {
+        <div class="bg-red-100 text-red-800 p-2 text-sm font-bold border-b border-red-200">
+            ⚠️ NOTE: @Order.KitchenNotes
+        </div>
+    }
+
+    <div class="p-4 flex-1">
+        <ul class="space-y-3">
+            @foreach (var item in Order.Items)
+            {
+                <li class="flex justify-between items-start @(item.Status == "Unavailable" ? "opacity-50 line-through" : "")">
+                    <div>
+                        <span class="font-bold">@item.Quantity x @item.ItemName</span>
+                        @if (!string.IsNullOrEmpty(item.Notes))
+                        {
+                            <p class="text-xs text-gray-500 italic">@item.Notes</p>
+                        }
+                    </div>
+                    @if (item.Status != "Unavailable" && !IsCompleted)
+                    {
+                        <button @onclick="() => OnMarkUnavailable.InvokeAsync(item.ItemId)" class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 transition-colors">
+                            Not Avail
+                        </button>
+                    }
+                    else if (item.Status == "Unavailable")
+                    {
+                        <span class="text-xs text-red-500 font-bold">86'd</span>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+
+    @if (!IsCompleted)
+    {
+        <div class="p-3 bg-gray-50 border-t flex space-x-2">
+            @if (Order.Status == "Pending")
+            {
+                <button @onclick="OnStartCooking" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition-colors">
+                    Start Cooking
+                </button>
+            }
+            else if (Order.Status == "Cooking")
+            {
+                <button @onclick="OnReady" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors">
+                    Ready to Serve
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public KitchenDashboardDTO Order { get; set; } = new();
+    [Parameter] public bool IsCompleted { get; set; } = false;
+    [Parameter] public EventCallback OnStartCooking { get; set; }
+    [Parameter] public EventCallback OnReady { get; set; }
+    [Parameter] public EventCallback<int> OnMarkUnavailable { get; set; }
+
+    private string TimeElapsed => Math.Floor((DateTime.Now - Order.OrderTime).TotalMinutes).ToString();
+
+    private string HeaderColorClass => Order.Status switch
+    {
+        "Pending" => "bg-amber-500",
+        "Cooking" => "bg-blue-500",
+        "Ready" => "bg-green-500",
+        _ => "bg-gray-500"
+    };
+}
