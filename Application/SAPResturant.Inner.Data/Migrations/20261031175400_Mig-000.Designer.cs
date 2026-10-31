@@ -12,8 +12,8 @@ using SAPResturant.Inner.Data.Context;
 namespace SAPResturant.Inner.Data.Migrations
 {
     [DbContext(typeof(SAPInnerResturantContext))]
-    [Migration("20260622163019_mig-000")]
-    partial class mig000
+    [Migration("20261031175400_Mig-000")]
+    partial class Mig000
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1285,6 +1285,13 @@ namespace SAPResturant.Inner.Data.Migrations
                             MaderLog = "SystemSeed",
                             Percent = (short)100,
                             StatusName = "Delivered"
+                        },
+                        new
+                        {
+                            OrderStatusId = 5,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)80,
+                            StatusName = "Ready"
                         });
                 });
 

@@ -38,6 +38,7 @@ namespace SAPResturant.Inner.Data.Context
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Pose> Poses { get; set; }
         public DbSet<SubInnerOrder> SubInnerOrders { get; set; }
+        public DbSet<SubInnerOrderExtraOnItemConnection> SubInnerOrderExtraOnItemConnections { get; set; }
         public DbSet<SubOuterOrder> SubOuterOrders { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Permission> Permissions { get; set; }
@@ -84,8 +85,16 @@ namespace SAPResturant.Inner.Data.Context
                 new OrderStatus() { MaderLog = log, OrderStatusId = 1, StatusName = "Initialized", Percent = 10 },
                 new OrderStatus() { MaderLog = log, OrderStatusId = 2, StatusName = "Sent to kitchen", Percent = 30 },
                 new OrderStatus() { MaderLog = log, OrderStatusId = 3, StatusName = "Cooking", Percent = 60 },
-                new OrderStatus() { MaderLog = log, OrderStatusId = 4, StatusName = "Delivered", Percent = 100 }
+                new OrderStatus() { MaderLog = log, OrderStatusId = 4, StatusName = "Delivered", Percent = 100 },
+                new OrderStatus() { MaderLog = log, OrderStatusId = 5, StatusName = "Ready", Percent = 80 }
                 );
+            modelBuilder.Entity<PaymentMethod>().HasData(
+                new PaymentMethod() { MethodId = 1, TitleOfPaymentMethod = "Card", Free = false, MaderLog = log },
+                new PaymentMethod() { MethodId = 2, TitleOfPaymentMethod = "Cash", Free = false, MaderLog = log },
+                new PaymentMethod() { MethodId = 3, TitleOfPaymentMethod = "Personnel", Free = true, MaderLog = log }
+                );
+            modelBuilder.Entity<SubInnerOrderExtraOnItemConnection>()
+                .HasKey(connection => new { connection.SubInnerOrderId, connection.ExtraOnItemId });
            
             modelBuilder.Entity<Item>().HasData(
 

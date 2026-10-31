@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SAPResturant.Inner.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class mig000 : Migration
+    public partial class Mig000 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -908,7 +908,8 @@ namespace SAPResturant.Inner.Data.Migrations
                     { 1, "SystemSeed", (short)10, "Initialized" },
                     { 2, "SystemSeed", (short)30, "Sent to kitchen" },
                     { 3, "SystemSeed", (short)60, "Cooking" },
-                    { 4, "SystemSeed", (short)100, "Delivered" }
+                    { 4, "SystemSeed", (short)100, "Delivered" },
+                    { 5, "SystemSeed", (short)80, "Ready" }
                 });
 
             migrationBuilder.InsertData(

@@ -5,15 +5,22 @@ namespace SAPResturant.Application.API.EndpointSections
 {
     public static class OrderEndpoints
     {
-        public static async void MapOrderEndpointApi(this IEndpointRouteBuilder app)
+        public static void MapOrderEndpointApi(this IEndpointRouteBuilder app)
         {
-            var EndpointGroup = app.MapGroup("/api/Order");
-            EndpointGroup.MapPost("/CreateNewOrderFromCashier", async (CreateNewOrderFormDTO DTo, IAPIService service) => 
+            var endpointGroup = app.MapGroup("/api/Order");
+            endpointGroup.MapPost("/CreateNewOrderFromCashier", async (CreateNewOrderFormDTO dto, IAPIService service) =>
             {
-              await service.CreateNewOrderFromCashier(DTo);
-              return Results.Created();
+                try
+                {
+                    var orderId = await service.CreateNewOrderFromCashier(dto);
+                    return Results.Created($"/api/Order/{orderId}", new { OrderId = orderId });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { Error = ex.Message });
+                }
             });
-            EndpointGroup.MapGet("/DeleteOrder/{OrderId}", async (int OrderId, IAPIService service) =>
+            endpointGroup.MapGet("/DeleteOrder/{OrderId}", async (int OrderId, IAPIService service) =>
             {
                 await service.RemoveInnerOrderFromCashier(OrderId);
                 return Results.Ok();

@@ -23,6 +23,18 @@ namespace SAPResturant.Application.API.Service.DTOs
         public string ItemName { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public string? Notes { get; set; }
-        public string Status { get; set; } = "Pending";
+    }
+
+    public class KitchenOrderStatusUpdateDTO
+    {
+        public string Status { get; set; } = string.Empty;
+    }
+
+    public enum KitchenOrderStatusUpdateResult
+    {
+        Updated,
+        OrderNotFound,
+        InvalidTransition,
+        TargetStatusNotConfigured
     }
 }

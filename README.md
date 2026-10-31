@@ -43,4 +43,5 @@ The system is currently being built to support the following zone-specific workf
 * [ ] Finalize internal router network configurations for node discovery.
 * [ ] Implement robust SQL Server synchronization logic for offline/local environments.
 * [ ] Complete multi-tenant database partitioning logic.
+* [x] Persist kitchen order transitions from Pending to Cooking to Ready.
 * [ ] Finalize real-time UI updates for `MyApplication` (Kitchen and Bar dashboards).

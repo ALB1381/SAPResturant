@@ -1282,6 +1282,13 @@ namespace SAPResturant.Inner.Data.Migrations
                             MaderLog = "SystemSeed",
                             Percent = (short)100,
                             StatusName = "Delivered"
+                        },
+                        new
+                        {
+                            OrderStatusId = 5,
+                            MaderLog = "SystemSeed",
+                            Percent = (short)80,
+                            StatusName = "Ready"
                         });
                 });
 
@@ -1364,6 +1371,29 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasKey("MethodId");
 
                     b.ToTable("PaymentMethods");
+
+                    b.HasData(
+                        new
+                        {
+                            MethodId = 1,
+                            Free = false,
+                            MaderLog = "SystemSeed",
+                            TitleOfPaymentMethod = "Card"
+                        },
+                        new
+                        {
+                            MethodId = 2,
+                            Free = false,
+                            MaderLog = "SystemSeed",
+                            TitleOfPaymentMethod = "Cash"
+                        },
+                        new
+                        {
+                            MethodId = 3,
+                            Free = true,
+                            MaderLog = "SystemSeed",
+                            TitleOfPaymentMethod = "Personnel"
+                        });
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.Pose", b =>
@@ -1635,6 +1665,21 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.HasIndex("ItemCaseID");
 
                     b.ToTable("SubInnerOrders");
+                });
+
+            modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubInnerOrderExtraOnItemConnection", b =>
+                {
+                    b.Property<int>("SubInnerOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExtraOnItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubInnerOrderId", "ExtraOnItemId");
+
+                    b.HasIndex("ExtraOnItemId");
+
+                    b.ToTable("SubInnerOrderExtraOnItemConnections");
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubOuterOrder", b =>
@@ -2362,6 +2407,25 @@ namespace SAPResturant.Inner.Data.Migrations
                     b.Navigation("ItemCase");
                 });
 
+            modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubInnerOrderExtraOnItemConnection", b =>
+                {
+                    b.HasOne("SAPResturant.Inner.Data.Entities.Menus.ExtraOnItem", "ExtraOnItem")
+                        .WithMany()
+                        .HasForeignKey("ExtraOnItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SAPResturant.Inner.Data.Entities.Orders.SubInnerOrder", "SubInnerOrder")
+                        .WithMany("ExtraConnections")
+                        .HasForeignKey("SubInnerOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExtraOnItem");
+
+                    b.Navigation("SubInnerOrder");
+                });
+
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubOuterOrder", b =>
                 {
                     b.HasOne("SAPResturant.Inner.Data.Entities.Menus.ExtraOnItem", "ExtraOnItem")
@@ -2651,6 +2715,11 @@ namespace SAPResturant.Inner.Data.Migrations
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.Space.TableStatus", b =>
                 {
                     b.Navigation("Tables");
+                });
+
+            modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Orders.SubInnerOrder", b =>
+                {
+                    b.Navigation("ExtraConnections");
                 });
 
             modelBuilder.Entity("SAPResturant.Inner.Data.Entities.Users.Permission", b =>

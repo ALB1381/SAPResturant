@@ -10,8 +10,16 @@
 
 @if (createOrderData == null)
 {
-    <div class="flex-1 flex items-center justify-center">
-        <p class="text-lg text-gray-500">Loading menu, please wait...</p>
+    <div class="flex-1 flex flex-col items-center justify-center gap-4">
+        @if (menuLoadError is null)
+        {
+            <p class="text-lg text-gray-500">Loading menu, please wait...</p>
+        }
+        else
+        {
+            <p class="text-lg text-red-700" role="alert">@menuLoadError</p>
+            <button @onclick="LoadMenuData" class="rounded-xl bg-amber-500 px-5 py-3 font-bold text-white hover:bg-amber-600">Retry</button>
+        }
     </div>
 }
 else
@@ -145,7 +153,7 @@ else
                         @foreach (var extra in selectedItemForModal.ShortExtraOnItems)
                         {
                             <label class="flex items-center p-3 rounded-lg cursor-pointer @(tempOrderItem.SelectedExtras.Contains(extra) ? "bg-blue-200" : "bg-white/50")">
-                                <input type="checkbox" class="hidden" @onchange="(e) => ToggleExtra(extra, (bool)e.Value, selectedItemForModal.ItemId)" />
+                                <input type="checkbox" class="hidden" checked="@tempOrderItem.SelectedExtras.Contains(extra)" @onchange="(e) => ToggleExtra(extra, (bool)e.Value!)" />
                                 <span class="flex-1">@extra.ExtraOnItemName</span>
                                 <span class="font-semibold">+ $@extra.ExtraOnItemPrice?.ToString("F2")</span>
                             </label>
@@ -169,6 +177,11 @@ else
         <div class="glass-card rounded-3xl w-full max-w-lg p-6" @onclick:stopPropagation="true">
             <h3 class="text-2xl font-bold mb-4">Finalize & Pay</h3>
 
+            @if (!string.IsNullOrWhiteSpace(orderError))
+            {
+                <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-red-800" role="alert">@orderError</div>
+            }
+
             <div class="mb-4">
                 <label for="kitchenNotes" class="font-semibold mb-2 block">Notes for Kitchen/Bar</label>
                 <textarea id="kitchenNotes" @bind="currentOrder.KitchenDescription" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" rows="3" placeholder="e.g., extra spicy, no onions..."></textarea>
@@ -176,7 +189,7 @@ else
 
             <div class="mb-4 relative">
                 <label for="customerPhone" class="font-semibold mb-2 block">Customer Phone (Optional)</label>
-                <input id="customerPhone" type="tel" @bind="currentOrder.CustomerPhoneNumber" @bind:event="oninput" onchange="@HandlePhoneNumberInput" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter phone to find customer...">
+                <input id="customerPhone" type="tel" value="@currentOrder.CustomerPhoneNumber" @oninput="HandlePhoneNumberInput" class="w-full p-3 rounded-xl border bg-white/70 focus:ring-2 focus:ring-amber-500 focus:outline-none glass-card" placeholder="Enter phone to find customer...">
 
                 @if (customerSuggestions.Any())
                 {
@@ -192,10 +205,10 @@ else
                 }
             </div>
 
-            @if (currentOrder.SelectedCustomer != null)
+            @if (currentOrder.SelectedCustomer is not null || currentOrder.NewCustomer is not null)
             {
                 <div class="p-3 rounded-lg bg-green-100 text-green-800 mb-4">
-                    Selected Customer: <span class="font-bold">@currentOrder.SelectedCustomer.CustomerName</span>
+                    Selected Customer: <span class="font-bold">@(currentOrder.SelectedCustomer?.CustomerName ?? currentOrder.NewCustomer?.CustomerName)</span>
                 </div>
             }
             @if (customerNotFound)
@@ -214,9 +227,9 @@ else
                 </div>
                 <h4 class="font-semibold mb-2">Payment Method</h4>
                 <div class="grid grid-cols-3 gap-2">
-                    <button @onclick="() => SubmitOrder(1)" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Card</button>
-                    <button @onclick="() => SubmitOrder(2)" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Cash</button>
-                    <button @onclick="() => SubmitOrder(3)" class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
+                    <button @onclick="() => SubmitOrder(1)" disabled="@isSubmitting" class="p-4 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-colors">Card</button>
+                    <button @onclick="() => SubmitOrder(2)" disabled="@isSubmitting" class="p-4 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-colors">Cash</button>
+                    <button @onclick="() => SubmitOrder(3)" disabled="@isSubmitting" class="p-4 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors">Personnel</button>
                 </div>
                
             </div>

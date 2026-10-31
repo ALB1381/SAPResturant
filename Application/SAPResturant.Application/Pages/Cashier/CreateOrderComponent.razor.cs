@@ -29,20 +29,35 @@ namespace SAPResturant.Application.Pages.Cashier
         // Finalize Modal State & Customer Search
         private List<LittleCustomerInformationDTO> customerSuggestions = new();
         private bool customerNotFound = false;
+        private bool isSubmitting;
+        private string? orderError;
+        private string? menuLoadError;
         private HttpClient client = new();
-        private List<SelectedExtraOnItemModel>? SelectedExtraOnItemModels { get; set; }
         public bool IsMan { get; set; }
         protected override async Task OnInitializedAsync()
         {
-            SelectedExtraOnItemModels = new List<SelectedExtraOnItemModel>();
             client = HttpClientFactory.CreateClient("Api");
+            await LoadMenuData();
+        }
+
+        private async Task LoadMenuData()
+        {
+            menuLoadError = null;
             try
             {
                 createOrderData = await client.GetFromJsonAsync<CreatNewOrderDTO>("api/Cashier/GetCreateNewOrderFromCashierDTOs");
+                if (createOrderData is null)
+                {
+                    menuLoadError = "The cashier API returned no menu data.";
+                }
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Failed to fetch initial order data: {ex.Message}");
+                menuLoadError = $"Could not load the menu: {ex.Message}";
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                menuLoadError = $"The menu response was invalid: {ex.Message}";
             }
         }
 
@@ -53,9 +68,10 @@ namespace SAPResturant.Application.Pages.Cashier
             public string? KitchenDescription { get; set; }
             public string? CustomerPhoneNumber { get; set; }
             public LittleCustomerInformationDTO? SelectedCustomer { get; set; }
+            public CreateNewCustomerDTO? NewCustomer { get; set; }
             public List<OrderItemViewModel> Items { get; set; } = new();
             public decimal RawPrice => Items.Sum(i => i.TotalItemPrice);
-            public decimal TaxPrice => RawPrice * 0.10m; // Example 10% tax
+            public decimal TaxPrice => Math.Round(RawPrice * 0.10m, 0, MidpointRounding.AwayFromZero);
             public decimal SumPrice => RawPrice + TaxPrice;
         }
 
@@ -74,13 +90,6 @@ namespace SAPResturant.Application.Pages.Cashier
             public int CustomerId { get; set; }
             public string CustomerName { get; set; }
             public string CustomerPhoneNumber { get; set; }
-        }
-
-        private class SelectedExtraOnItemModel
-        {
-
-            public int Id { get; set; }
-            public int CaseId { get; set; }
         }
 
         private IEnumerable<ShortItemInformation> GetFilteredItems()
@@ -129,12 +138,14 @@ namespace SAPResturant.Application.Pages.Cashier
             customerNotFound = false;
             customerSuggestions.Clear();
             currentOrder.SelectedCustomer = null;
+            currentOrder.NewCustomer = null;
 
             if (!string.IsNullOrWhiteSpace(currentOrder.CustomerPhoneNumber) && currentOrder.CustomerPhoneNumber.Length > 2)
             {
                 try
                 {
-                    customerSuggestions = await client.GetFromJsonAsync<List<LittleCustomerInformationDTO>>($"api/Customer/GetUserNamesByPhoneNumber/{currentOrder.CustomerPhoneNumber}");
+                    var phoneNumber = Uri.EscapeDataString(currentOrder.CustomerPhoneNumber);
+                    customerSuggestions = await client.GetFromJsonAsync<List<LittleCustomerInformationDTO>>($"api/Customer/GetUserNamesByPhoneNumber/{phoneNumber}");
                     if (customerSuggestions == null || !customerSuggestions.Any())
                     {
                         customerNotFound = true;
@@ -151,23 +162,21 @@ namespace SAPResturant.Application.Pages.Cashier
         private void SelectCustomer(LittleCustomerInformationDTO customer)
         {
             currentOrder.SelectedCustomer = customer;
+            currentOrder.NewCustomer = null;
             currentOrder.CustomerPhoneNumber = customer.CustomerPhoneNumber;
             customerSuggestions.Clear();
             customerNotFound = false;
         }
 
-        private void ToggleExtra(ShortExtraOnItem extra, bool isChecked, int CaseId)
+        private void ToggleExtra(ShortExtraOnItem extra, bool isChecked)
         {
-            if (isChecked)
+            if (isChecked && !tempOrderItem.SelectedExtras.Contains(extra))
             {
-                if (!tempOrderItem.SelectedExtras.Contains(extra))
-                    tempOrderItem.SelectedExtras.Add(extra);
-                SelectedExtraOnItemModels.Add(new SelectedExtraOnItemModel { Id = extra.ExtraOnItemId, CaseId = CaseId });
+                tempOrderItem.SelectedExtras.Add(extra);
             }
-            else
+            else if (!isChecked)
             {
                 tempOrderItem.SelectedExtras.Remove(extra);
-                SelectedExtraOnItemModels.Remove(SelectedExtraOnItemModels.FirstOrDefault(q => q.Id == extra.ExtraOnItemId && q.CaseId == CaseId));
             }
         }
 
@@ -216,60 +225,56 @@ namespace SAPResturant.Application.Pages.Cashier
 
         private async Task SubmitOrder(int paymentMethodId)
         {
-            //To Do: User Cashier User Name in Mader Log
+            if (isSubmitting || currentOrder.Items.Count == 0)
+            {
+                return;
+            }
+
+            isSubmitting = true;
+            orderError = null;
             var orderDto = new CreateNewOrderFormDTO
             {
                 CustomerId = currentOrder.SelectedCustomer?.CustomerId,
-                CustomerName = currentOrder.SelectedCustomer == null ? "Guest" : currentOrder.SelectedCustomer.CustomerName,
+                NewCustomer = currentOrder.NewCustomer,
+                CustomerName = currentOrder.NewCustomer?.CustomerName
+                    ?? currentOrder.SelectedCustomer?.CustomerName
+                    ?? "Guest",
                 CustomerPhoneNumber = currentOrder.CustomerPhoneNumber,
                 Description = currentOrder.KitchenDescription,
-                IsMan = IsMan,
+                IsMan = currentOrder.NewCustomer is null ? IsMan : currentOrder.NewCustomer.Sex == "Man",
                 OrderType = "Inner",
-                LogFromClient = "Made From Cashier {Cashier User Name}",
+                LogFromClient = "Cashier",
                 TableId = currentOrder.TableId,
-                SubOrders = currentOrder.Items.SelectMany(item =>
+                PaymentMethodId = paymentMethodId,
+                SubOrders = currentOrder.Items.Select(item => new SubOrderLittleInformationDTO
                 {
-                    var subOrders = new List<SubOrderLittleInformationDTO>
-                {
-                    new SubOrderLittleInformationDTO
-                    {
-                        ItemCaseId = item.SelectedOption.OptionId,
-                        Count = item.Quantity,
-                        ExtraOnItemId = SelectedExtraOnItemModels
-                            .Where(e => e.CaseId == item.BaseItem.ItemId)
-                            .Select(e => e.Id)
-                            .ToList()
-                    }
-                };
-                    return subOrders;
+                    ItemCaseId = item.SelectedOption.OptionId,
+                    Count = item.Quantity,
+                    ExtraOnItemId = item.SelectedExtras.Select(extra => extra.ExtraOnItemId).ToList()
                 }).ToList()
-
-
             };
 
             try
             {
+                using var response = await client.PostAsJsonAsync("api/Order/CreateNewOrderFromCashier", orderDto);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var details = await response.Content.ReadAsStringAsync();
+                    orderError = string.IsNullOrWhiteSpace(details)
+                        ? $"The order could not be saved ({(int)response.StatusCode})."
+                        : $"The order could not be saved: {details}";
+                    return;
+                }
 
-                var response = await client.PostAsJsonAsync("api/Order/CreateNewOrderFromCashier", orderDto);
-                if (response.IsSuccessStatusCode)
-                {
-                    // Order created successfully, reset for the next one
-                    currentOrder = new OrderViewModel();
-                    CloseFinalizeModal();
-                    StateHasChanged();
-                    // Optionally navigate to a success page or dashboard
-                    // NavigationManager.NavigateTo("/dashboard");
-                    ReloadPage();
-                }
-                else
-                {
-                    Console.WriteLine($"Error creating order: {response.ReasonPhrase}");
-                    // Handle error display to the user
-                }
+                ReloadPage();
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Exception during order creation: {ex.Message}");
+                orderError = $"Could not reach the order service: {ex.Message}";
+            }
+            finally
+            {
+                isSubmitting = false;
             }
         }
 
@@ -290,17 +295,15 @@ namespace SAPResturant.Application.Pages.Cashier
             NavigationManager.NavigateTo("/CashierDashboard", true);
         }
 
-        private async Task HandleCustomerSaved(CreateNewCustomerDTO newCustomer)
+        private Task HandleCustomerSaved(CreateNewCustomerDTO newCustomer)
         {
-            newCustomer.Log = "From-Cashier-inOrderMade";
-            var response = await client.PostAsJsonAsync("api/Customer/AddCustomer", newCustomer);
-            if (response.IsSuccessStatusCode)
-            {
-              
-                showCustomerModal = false;
-                ReloadPage();
-            }
-           
+            currentOrder.NewCustomer = newCustomer;
+            currentOrder.CustomerPhoneNumber = newCustomer.CustomerPhoneNumber;
+            currentOrder.SelectedCustomer = null;
+            customerSuggestions.Clear();
+            customerNotFound = false;
+            showCustomerModal = false;
+            return Task.CompletedTask;
         }
     }
 }

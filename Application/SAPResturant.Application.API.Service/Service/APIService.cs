@@ -52,119 +52,210 @@ namespace SAPResturant.Application.API.Service.Service
             }
         }
 
-        public async Task CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
+        public async Task<int> CreateNewOrderFromCashier(CreateNewOrderFormDTO createNewOrderFormDTO)
         {
-            // Use a transaction to ensure atomicity.
-            await using var transaction = await _context.Database.BeginTransactionAsync();
+            if (createNewOrderFormDTO.OrderType != "Inner")
+            {
+                throw new ArgumentException("Only dine-in and takeout inner orders are supported.");
+            }
 
+            if (createNewOrderFormDTO.SubOrders.Count == 0 || createNewOrderFormDTO.SubOrders.Any(item => item.Count <= 0))
+            {
+                throw new ArgumentException("An order must contain items with a positive quantity.");
+            }
+
+            if (createNewOrderFormDTO.Description?.Length > 300)
+            {
+                throw new ArgumentException("Kitchen notes cannot exceed 300 characters.");
+            }
+
+            if (createNewOrderFormDTO.CustomerId.HasValue && createNewOrderFormDTO.NewCustomer is not null)
+            {
+                throw new ArgumentException("Choose an existing customer or enter a new customer, not both.");
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 1. Handle Customer: Use existing or create a new one.
-                int? finalCustomerId = createNewOrderFormDTO.CustomerId;
-                if (!finalCustomerId.HasValue)
-                {
-                    finalCustomerId = await CreateNewCustomer(new CreateNewCustomerDTO() { CustomerName = createNewOrderFormDTO.CustomerName, CustomerPhoneNumber = createNewOrderFormDTO.CustomerPhoneNumber });
+                var itemCaseIds = createNewOrderFormDTO.SubOrders
+                    .Select(item => item.ItemCaseId)
+                    .Distinct()
+                    .ToList();
+                var extraIds = createNewOrderFormDTO.SubOrders
+                    .Where(item => item.ExtraOnItemId is not null)
+                    .SelectMany(item => item.ExtraOnItemId!)
+                    .Distinct()
+                    .ToList();
 
+                var itemCases = await _context.ItemCases
+                    .Where(itemCase => itemCaseIds.Contains(itemCase.ItemCaseId))
+                    .ToDictionaryAsync(itemCase => itemCase.ItemCaseId);
+                if (itemCases.Count != itemCaseIds.Count)
+                {
+                    throw new ArgumentException("One or more selected menu options no longer exist.");
                 }
 
-                // 2. Create the Order (Inner or Outer).
-                if (createNewOrderFormDTO.OrderType == "Inner")
+                var extras = await _context.ExtraOnItems
+                    .Where(extra => extraIds.Contains(extra.ExtraOnItemId))
+                    .ToDictionaryAsync(extra => extra.ExtraOnItemId);
+                if (extras.Count != extraIds.Count)
                 {
-                    var subDtos = createNewOrderFormDTO.SubOrders ?? new List<SubOrderLittleInformationDTO>();
+                    throw new ArgumentException("One or more selected extras no longer exist.");
+                }
 
-                    // Gather ids to minimize DB roundtrips
-                    var caseIds = subDtos.Select(s => s.ItemCaseId).Distinct().ToList();
-                    var extraIds = subDtos.Where(s => s.ExtraOnItemId != null)
-                                          .SelectMany(s => s.ExtraOnItemId!)
-                                          .Distinct()
-                                          .ToList();
+                var extraConnections = await _context.ExtraOnItemItemConnections
+                    .Where(connection => extraIds.Contains(connection.ExtraOnItemId))
+                    .Select(connection => new { connection.ItemId, connection.ExtraOnItemId })
+                    .ToListAsync();
 
-                    var itemCases = await _context.ItemCases.Where(ic => caseIds.Contains(ic.ItemCaseId)).ToListAsync();
-                    var extras = await _context.ExtraOnItems.Where(e => extraIds.Contains(e.ExtraOnItemId)).ToListAsync();
-
-                    // Build sub-order entities (without InnerOrderId yet)
-                    var subInnerOrders = new List<SubInnerOrder>();
-                    int rawPrice = 0;
-
-                    foreach (var sd in subDtos)
+                foreach (var item in createNewOrderFormDTO.SubOrders)
+                {
+                    var selectedExtras = item.ExtraOnItemId ?? new List<int>();
+                    if (selectedExtras.Distinct().Count() != selectedExtras.Count)
                     {
-                        var itemCase = itemCases.FirstOrDefault(c => c.ItemCaseId == sd.ItemCaseId);
-                        int casePrice = itemCase?.CasePrice ?? 0;
-
-                        int extrasSum = 0;
-                        if (sd.ExtraOnItemId != null && sd.ExtraOnItemId.Any())
-                        {
-                            foreach (var exId in sd.ExtraOnItemId)
-                            {
-                                var ex = extras.FirstOrDefault(e => e.ExtraOnItemId == exId);
-                                extrasSum += ex?.ExtraOnItemPrice ?? 0;
-                            }
-                        }
-
-                        int singlePrice = casePrice + extrasSum;
-                        int sumPrice = singlePrice * sd.Count;
-                        rawPrice += sumPrice;
-
-                        var sub = new SubInnerOrder
-                        {
-                            Count = sd.Count,
-                            SinglePrice = singlePrice,
-                            SumPrice = sumPrice,
-                            MadeDate = DateTime.UtcNow,
-                            ItemCaseID = sd.ItemCaseId,
-                            // FK will be set after parent order is created; store first extra id (if any)
-                            ExtraOnItemId = sd.ExtraOnItemId?.FirstOrDefault(),
-                            MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty
-                        };
-
-                        subInnerOrders.Add(sub);
+                        throw new ArgumentException("An extra cannot be selected more than once for the same item.");
                     }
 
-                    // Tax and total (use 10% as in UI)
-                    int taxPrice = (int)Math.Round(rawPrice * 0.10);
-                    int sumPriceTotal = rawPrice + taxPrice;
-
-                    // Create parent order first (without attaching children)
-                    var newOrder = new InnerOrder
+                    var itemId = itemCases[item.ItemCaseId].ItemId;
+                    if (selectedExtras.Any(extraId => !extraConnections.Any(connection =>
+                            connection.ItemId == itemId && connection.ExtraOnItemId == extraId)))
                     {
-                        CustomerId = finalCustomerId,
-                        TableId = createNewOrderFormDTO.TableId,
-                        OrderDescription = createNewOrderFormDTO.Description,
-                        OrderDate = DateTime.UtcNow,
-                        OrderStatusId = 1, // default new order status
-                        MaderLog = createNewOrderFormDTO.LogFromClient ?? string.Empty,
-                        RawPrice = rawPrice,
-                        TaxPrice = taxPrice,
-                        SumPrice = sumPriceTotal
+                        throw new ArgumentException("An extra was selected for a menu item that does not offer it.");
+                    }
+                }
+
+                var orderTable = createNewOrderFormDTO.TableId.HasValue
+                    ? await _context.Tables.FirstOrDefaultAsync(table => table.TableId == createNewOrderFormDTO.TableId.Value)
+                    : null;
+                if (createNewOrderFormDTO.TableId.HasValue && orderTable is null)
+                {
+                    throw new ArgumentException("The selected table does not exist.");
+                }
+
+                var takenStatus = orderTable is null
+                    ? null
+                    : await _context.TableStatuses.FirstOrDefaultAsync(status => status.TableStatusName == "Taken");
+                if (orderTable is not null && takenStatus is null)
+                {
+                    throw new InvalidOperationException("The Taken table status is not configured.");
+                }
+                if (orderTable is not null)
+                {
+                    orderTable.TableStatusId = takenStatus!.TableStatusId;
+                }
+
+                var paymentMethod = await _context.PaymentMethods
+                    .FirstOrDefaultAsync(method => method.MethodId == createNewOrderFormDTO.PaymentMethodId);
+                if (paymentMethod is null)
+                {
+                    throw new ArgumentException("The selected payment method is not configured. Apply the pending database migration.");
+                }
+
+                var orderStatus = await _context.OrderStatuses
+                    .FirstOrDefaultAsync(status => status.StatusName == "Initialized");
+                if (orderStatus is null)
+                {
+                    throw new InvalidOperationException("The Initialized order status is not configured.");
+                }
+
+                SAPResturant.Inner.Data.Entities.Customers.Customer customer;
+                if (createNewOrderFormDTO.CustomerId.HasValue)
+                {
+                    customer = await _context.Customers
+                        .FirstOrDefaultAsync(existingCustomer => existingCustomer.CustomerId == createNewOrderFormDTO.CustomerId.Value)
+                        ?? throw new ArgumentException("The selected customer does not exist.");
+                }
+                else
+                {
+                    var newCustomer = createNewOrderFormDTO.NewCustomer;
+                    var customerName = newCustomer?.CustomerName ?? createNewOrderFormDTO.CustomerName ?? "Guest";
+                    var phone = newCustomer?.CustomerPhoneNumber ?? createNewOrderFormDTO.CustomerPhoneNumber;
+                    var address = newCustomer?.CustomerAddress;
+                    var age = newCustomer?.Age;
+
+                    if (customerName.Length > 100 || phone?.Length > 15 || address?.Length > 800 || age is < 0 or > 255)
+                    {
+                        throw new ArgumentException("The new customer details exceed the allowed limits.");
+                    }
+
+                    customer = new SAPResturant.Inner.Data.Entities.Customers.Customer
+                    {
+                        CustomerName = customerName,
+                        CustomerPhone = phone,
+                        Address = address,
+                        Age = age,
+                        IsMan = newCustomer is null ? createNewOrderFormDTO.IsMan : newCustomer.Sex == "Man",
+                        FirstShop = DateTime.UtcNow,
+                        MaderLog = "Cashier"
                     };
-
-                    _context.InnerOrders.Add(newOrder);
-                    // Save to get generated InnerOrderId
-                    await _context.SaveChangesAsync();
-
-                    // Now set the FK for each sub-order and insert them
-                    foreach (var sub in subInnerOrders)
-                    {
-                        sub.InnerOrderId = newOrder.InnerOrderId;
-                        if (sub.ExtraOnItemId == 0)
-                        {
-                            sub.ExtraOnItemId = null;
-                        }
-                    }
-
-                    if (subInnerOrders.Any())
-                    {
-                        _context.SubInnerOrders.AddRange(subInnerOrders);
-                        await _context.SaveChangesAsync();
-                    }
+                    _context.Customers.Add(customer);
                 }
 
+                var subInnerOrders = new List<SubInnerOrder>();
+                var rawPrice = 0;
+                foreach (var item in createNewOrderFormDTO.SubOrders)
+                {
+                    var itemCase = itemCases[item.ItemCaseId];
+                    var selectedExtras = item.ExtraOnItemId ?? new List<int>();
+                    var extrasTotal = selectedExtras.Sum(extraId => extras[extraId].ExtraOnItemPrice ?? 0);
+                    var singlePrice = checked(itemCase.CasePrice + extrasTotal);
+                    var sumPrice = checked(singlePrice * item.Count);
+                    rawPrice = checked(rawPrice + sumPrice);
+
+                    subInnerOrders.Add(new SubInnerOrder
+                    {
+                        Count = item.Count,
+                        SinglePrice = singlePrice,
+                        SumPrice = sumPrice,
+                        MadeDate = DateTime.UtcNow,
+                        ItemCaseID = item.ItemCaseId,
+                        ExtraOnItemId = selectedExtras.Count > 0 ? selectedExtras[0] : null,
+                        ExtraConnections = selectedExtras.Select(extraId => new SubInnerOrderExtraOnItemConnection
+                        {
+                            ExtraOnItemId = extraId
+                        }).ToList(),
+                        MaderLog = "Cashier"
+                    });
+                }
+
+                var taxPrice = (int)Math.Round(rawPrice * 0.10, MidpointRounding.AwayFromZero);
+                var sumPriceTotal = checked(rawPrice + taxPrice);
+                var now = DateTime.UtcNow;
+                var newOrder = new InnerOrder
+                {
+                    Customer = customer,
+                    TableId = createNewOrderFormDTO.TableId,
+                    OrderDescription = createNewOrderFormDTO.Description,
+                    OrderDate = now,
+                    OrderStatusId = orderStatus.OrderStatusId,
+                    MaderLog = "Cashier",
+                    RawPrice = rawPrice,
+                    TaxPrice = taxPrice,
+                    SumPrice = sumPriceTotal,
+                    SubInnerOrders = subInnerOrders,
+                    Transactions = new List<Transaction>
+                    {
+                        new()
+                        {
+                            TransactionSum = paymentMethod.Free ? 0 : sumPriceTotal,
+                            TransactionCreateDate = now,
+                            TransactionPayedTime = now,
+                            PaymentMethodId = paymentMethod.MethodId,
+                            IsPayed = true,
+                            MaderLog = "Cashier"
+                        }
+                    }
+                };
+
+                _context.InnerOrders.Add(newOrder);
+                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+                return newOrder.InnerOrderId;
             }
-            catch (Exception)
+            catch
             {
                 await transaction.RollbackAsync();
-                throw; // Propagate the error.
+                throw;
             }
         }
 
@@ -322,66 +413,104 @@ namespace SAPResturant.Application.API.Service.Service
         {
             var sql = @"
         -- Result Set 1: Active Kitchen Orders
-        SELECT DISTINCT 
+        SELECT DISTINCT
             o.InnerOrderId AS OrderId,
             ISNULL(t.TableName, 'Takeout/No Table') AS TableName,
             ISNULL(o.TableId, 0) AS TableId,
             o.OrderDate AS OrderTime,
-            os.StatusName AS Status,
+            CASE os.StatusName
+                WHEN 'Initialized' THEN 'Pending'
+                WHEN 'Sent to kitchen' THEN 'Pending'
+                ELSE os.StatusName
+            END AS Status,
             o.OrderDescription AS KitchenNotes
         FROM dbo.InnerOrders o
         LEFT JOIN dbo.Tables t ON o.TableId = t.TableId
-        LEFT JOIN dbo.OrderStatuses os ON o.OrderStatusId = os.OrderStatusId
+        INNER JOIN dbo.OrderStatuses os ON o.OrderStatusId = os.OrderStatusId
         INNER JOIN dbo.SubInnerOrders sio ON o.InnerOrderId = sio.InnerOrderId
         INNER JOIN dbo.ItemCases ic ON sio.ItemCaseID = ic.ItemCaseId
         INNER JOIN dbo.Items i ON ic.ItemId = i.ItemId
-        WHERE o.OrderStatusId IN (1, 2, 3) -- Initialized, Sent to kitchen, Cooking
-          AND i.ItemUnitId = 2 -- KITCHEN ONLY (Ignores Cafe drinks)
+        WHERE os.StatusName IN ('Initialized', 'Sent to kitchen', 'Cooking', 'Ready')
+          AND i.ItemUnitId = 2
         ORDER BY o.OrderDate ASC;
 
-        -- Result Set 2: The Items inside those active orders
-        SELECT 
+        -- Result Set 2: The items inside active kitchen orders
+        SELECT
             sio.InnerOrderId AS OrderId,
             i.ItemId,
             i.ItemName,
             sio.Count AS Quantity,
-            e.ExtraOnItemTitle AS Notes,
-            'Pending' AS Status
+            extra.ExtraOnItemTitle AS Notes
         FROM dbo.SubInnerOrders sio
         INNER JOIN dbo.InnerOrders o ON sio.InnerOrderId = o.InnerOrderId
+        INNER JOIN dbo.OrderStatuses os ON o.OrderStatusId = os.OrderStatusId
         INNER JOIN dbo.ItemCases ic ON sio.ItemCaseID = ic.ItemCaseId
         INNER JOIN dbo.Items i ON ic.ItemId = i.ItemId
-        LEFT JOIN dbo.ExtraOnItems e ON sio.ExtraOnItemId = e.ExtraOnItemId
-        WHERE o.OrderStatusId IN (1, 2, 3)
-          AND i.ItemUnitId = 2; -- KITCHEN ONLY
+        LEFT JOIN dbo.ExtraOnItems extra ON sio.ExtraOnItemId = extra.ExtraOnItemId
+        WHERE os.StatusName IN ('Initialized', 'Sent to kitchen', 'Cooking', 'Ready')
+          AND i.ItemUnitId = 2;
     ";
 
             var db = _context.Database.GetDbConnection();
             using (var multi = await db.QueryMultipleAsync(sql))
             {
-
                 var orders = (await multi.ReadAsync<KitchenDashboardDTO>()).ToList();
-
-
                 var allItems = await multi.ReadAsync<dynamic>();
-
 
                 foreach (var order in orders)
                 {
                     order.Items = allItems
-                        .Where(x => x.OrderId == order.OrderId)
-                        .Select(x => new KitchenOrderItemDTO
+                        .Where(item => item.OrderId == order.OrderId)
+                        .Select(item => new KitchenOrderItemDTO
                         {
-                            ItemId = x.ItemId,
-                            ItemName = x.ItemName,
-                            Quantity = x.Quantity,
-                            Notes = x.Notes,
-                            Status = x.Status
-                        }).ToList();
+                            ItemId = item.ItemId,
+                            ItemName = item.ItemName,
+                            Quantity = item.Quantity,
+                            Notes = item.Notes
+                        })
+                        .ToList();
                 }
 
                 return orders;
             }
+        }
+
+        public async Task<KitchenOrderStatusUpdateResult> UpdateKitchenOrderStatus(int orderId, string status)
+        {
+            var order = await _context.InnerOrders
+                .Include(innerOrder => innerOrder.OrderStatus)
+                .FirstOrDefaultAsync(innerOrder => innerOrder.InnerOrderId == orderId);
+
+            if (order is null)
+            {
+                return KitchenOrderStatusUpdateResult.OrderNotFound;
+            }
+
+            var currentStatus = order.OrderStatus?.StatusName;
+            var isValidTransition = status switch
+            {
+                "Cooking" => currentStatus is "Initialized" or "Sent to kitchen",
+                "Ready" => currentStatus == "Cooking",
+                _ => false
+            };
+
+            if (!isValidTransition)
+            {
+                return KitchenOrderStatusUpdateResult.InvalidTransition;
+            }
+
+            var targetStatus = await _context.OrderStatuses
+                .FirstOrDefaultAsync(orderStatus => orderStatus.StatusName == status);
+
+            if (targetStatus is null)
+            {
+                return KitchenOrderStatusUpdateResult.TargetStatusNotConfigured;
+            }
+
+            order.OrderStatusId = targetStatus.OrderStatusId;
+            await _context.SaveChangesAsync();
+
+            return KitchenOrderStatusUpdateResult.Updated;
         }
 
         public async Task RemoveInnerOrderFromCashier(int OrderId)
